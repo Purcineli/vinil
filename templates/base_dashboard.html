@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block navbar %}{% endblock %}
+
+{% block footer %}{% endblock %}
+
+{% block content %}
+<div class="flex min-h-screen">
+  {% include 'components/sidebar.html' %}
+  <main class="flex-1 p-8 overflow-y-auto bg-slate-50">
+    {% block dashboard_content %}{% endblock %}
+  </main>
+</div>
+{% endblock %}

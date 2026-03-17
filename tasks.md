@@ -23,24 +23,24 @@
 - [x] 0.2.2 — Configurar `DATABASES` com SQLite padrão
 - [x] 0.2.3 — Configurar `LANGUAGE_CODE = 'pt-br'` e `TIME_ZONE = 'America/Sao_Paulo'`
 - [x] 0.2.4 — Configurar `USE_I18N = True` e `USE_TZ = True`
-- [ ] 0.2.5 — Configurar `LOGIN_URL = '/login/'`, `LOGIN_REDIRECT_URL = '/dashboard/'`, `LOGOUT_REDIRECT_URL = '/'`
-- [ ] 0.2.6 — Adicionar `AUTHENTICATION_BACKENDS` com o backend customizado de e-mail (a ser criado na Sprint 1)
-- [ ] 0.2.7 — Configurar `TEMPLATES['DIRS']` apontando para o diretório `templates/` na raiz
-- [ ] 0.2.8 — Configurar `STATIC_URL` e `STATICFILES_DIRS`
+- [x] 0.2.5 — Configurar `LOGIN_URL = '/login/'`, `LOGIN_REDIRECT_URL = '/dashboard/'`, `LOGOUT_REDIRECT_URL = '/'`
+- [x] 0.2.6 — Adicionar `AUTHENTICATION_BACKENDS` com o backend customizado de e-mail (a ser criado na Sprint 1)
+- [x] 0.2.7 — Configurar `TEMPLATES['DIRS']` apontando para o diretório `templates/` na raiz
+- [x] 0.2.8 — Configurar `STATIC_URL` e `STATICFILES_DIRS`
 
 #### Tarefa 0.3 — Estrutura de templates base
-- [ ] 0.3.1 — Criar diretório `templates/` na raiz do projeto
-- [ ] 0.3.2 — Criar `templates/base.html` com HTML5, TailwindCSS via CDN, fonte Inter, bloco `title`, bloco `content` e bloco `extra_scripts`
-- [ ] 0.3.3 — Criar `templates/base_dashboard.html` extendendo `base.html`, com sidebar e área de conteúdo principal
-- [ ] 0.3.4 — Criar `templates/components/navbar.html` com logo, links e botões de auth
-- [ ] 0.3.5 — Criar `templates/components/footer.html` com texto simples
-- [ ] 0.3.6 — Criar `templates/components/sidebar.html` com links de navegação do dashboard
-- [ ] 0.3.7 — Criar `templates/components/messages.html` para exibir flash messages do Django com estilos do design system
+- [x] 0.3.1 — Criar diretório `templates/` na raiz do projeto
+- [x] 0.3.2 — Criar `templates/base.html` com HTML5, TailwindCSS via CDN, fonte Inter, bloco `title`, bloco `content` e bloco `extra_scripts`
+- [x] 0.3.3 — Criar `templates/base_dashboard.html` extendendo `base.html`, com sidebar e área de conteúdo principal
+- [x] 0.3.4 — Criar `templates/components/navbar.html` com logo, links e botões de auth
+- [x] 0.3.5 — Criar `templates/components/footer.html` com texto simples
+- [x] 0.3.6 — Criar `templates/components/sidebar.html` com links de navegação do dashboard
+- [x] 0.3.7 — Criar `templates/components/messages.html` para exibir flash messages do Django com estilos do design system
 
 #### Tarefa 0.4 — URLs base
-- [ ] 0.4.1 — Configurar `core/urls.py` com `include()` para cada app
-- [ ] 0.4.2 — Criar `urls.py` em cada app com `app_name` definido para namespace
-- [ ] 0.4.3 — Criar uma view de teste (`TemplateView`) apontando para `base.html` para validar o setup visual
+- [x] 0.4.1 — Configurar `core/urls.py` com `include()` para cada app
+- [x] 0.4.2 — Criar `urls.py` em cada app com `app_name` definido para namespace
+- [x] 0.4.3 — Criar uma view de teste (`TemplateView`) apontando para `base.html` para validar o setup visual
 
 ---
 
