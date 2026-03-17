@@ -2,9 +2,26 @@
 
 {% block title %}Ingresso {{ ticket.code }} — Vinil{% endblock %}
 
+{% block extra_head %}
+<style>
+  @media print {
+    nav, aside, .sidebar, [data-sidebar], header,
+    #sidebar-wrapper, #sidebar-overlay, #sidebar-toggle {
+      display: none !important;
+    }
+    .print-area {
+      max-width: 100% !important;
+    }
+    body {
+      background: white !important;
+    }
+  }
+</style>
+{% endblock %}
+
 {% block dashboard_content %}
 
-<div class="max-w-2xl mx-auto">
+<div class="max-w-2xl mx-auto print-area">
 
   {# ====================== PAGE HEADER ====================== #}
   <div class="relative overflow-hidden bg-gradient-to-br from-violet-600 via-fuchsia-500 to-pink-400 rounded-2xl mb-8 shadow-lg">

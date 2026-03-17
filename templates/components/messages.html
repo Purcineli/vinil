@@ -1,14 +1,61 @@
 {% if messages %}
 <div class="max-w-7xl mx-auto px-4 pt-4 flex flex-col gap-2">
   {% for message in messages %}
-    <div class="flex items-center justify-between px-4 py-3 rounded-xl border text-sm font-medium
-      {% if message.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-700
-      {% elif message.tags == 'error' %}bg-rose-50 border-rose-200 text-rose-700
-      {% elif message.tags == 'warning' %}bg-amber-50 border-amber-200 text-amber-700
-      {% else %}bg-violet-50 border-violet-200 text-violet-700{% endif %}">
-      <span>{{ message }}</span>
-      <button onclick="this.parentElement.remove()" aria-label="Fechar" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">&#x2715;</button>
-    </div>
+
+    {% if message.tags == 'success' %}
+      <div role="alert" class="flex items-start gap-3 px-4 py-3 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-800 text-sm font-medium">
+        <svg class="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="flex-1">{{ message }}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Fechar mensagem" class="ml-2 text-emerald-500 hover:text-emerald-700 opacity-70 hover:opacity-100 transition-opacity shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+    {% elif message.tags == 'error' %}
+      <div role="alert" class="flex items-start gap-3 px-4 py-3 rounded-xl border bg-red-50 border-red-200 text-red-800 text-sm font-medium">
+        <svg class="w-5 h-5 text-red-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="flex-1">{{ message }}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Fechar mensagem" class="ml-2 text-red-500 hover:text-red-700 opacity-70 hover:opacity-100 transition-opacity shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+    {% elif message.tags == 'warning' %}
+      <div role="alert" class="flex items-start gap-3 px-4 py-3 rounded-xl border bg-amber-50 border-amber-200 text-amber-800 text-sm font-medium">
+        <svg class="w-5 h-5 text-amber-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+        </svg>
+        <span class="flex-1">{{ message }}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Fechar mensagem" class="ml-2 text-amber-500 hover:text-amber-700 opacity-70 hover:opacity-100 transition-opacity shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+    {% else %}
+      {# info e debug mapeados para azul #}
+      <div role="alert" class="flex items-start gap-3 px-4 py-3 rounded-xl border bg-blue-50 border-blue-200 text-blue-800 text-sm font-medium">
+        <svg class="w-5 h-5 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        <span class="flex-1">{{ message }}</span>
+        <button onclick="this.parentElement.remove()" aria-label="Fechar mensagem" class="ml-2 text-blue-500 hover:text-blue-700 opacity-70 hover:opacity-100 transition-opacity shrink-0">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" aria-hidden="true">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+    {% endif %}
+
   {% endfor %}
 </div>
 {% endif %}

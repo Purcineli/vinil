@@ -1,7 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse
+from django.views import View
 from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from events.models import Event
@@ -69,6 +70,40 @@ class TicketDetailView(LoginRequiredMixin, DetailView):
             'order_item__ticket_type__event',
             'order_item__order__buyer',
         )
+
+
+class TicketValidateView(LoginRequiredMixin, View):
+    template_name = 'tickets/validate.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name, {})
+
+    def post(self, request, *args, **kwargs):
+        code = request.POST.get('code', '').strip().upper()
+
+        ticket = (
+            Ticket.objects
+            .select_related(
+                'order_item__ticket_type__event',
+                'order_item__order__buyer',
+            )
+            .filter(code=code)
+            .first()
+        )
+
+        if ticket is None:
+            context = {'result': 'invalid'}
+        elif ticket.is_used:
+            context = {
+                'result': 'already_used',
+                'ticket': ticket,
+                'used_at': ticket.used_at,
+            }
+        else:
+            ticket.mark_as_used()
+            context = {'result': 'success', 'ticket': ticket}
+
+        return render(request, self.template_name, context)
 
 
 class MyTicketsListView(LoginRequiredMixin, ListView):

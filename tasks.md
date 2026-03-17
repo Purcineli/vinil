@@ -232,153 +232,153 @@
 
 ---
 
-### Sprint 6 — App `orders`
+### Sprint 6 — App `orders` ✅
 
 **Objetivo:** Fluxo de criação e listagem de pedidos com proteção de concorrência.
 
 #### Tarefa 6.1 — Models `Order` e `OrderItem`
-- [ ] 6.1.1 — Criar `orders/models.py`
-- [ ] 6.1.2 — Implementar model `Order` com campos: `buyer` (FK settings.AUTH_USER_MODEL), `status` (CharField, choices: `pending`, `confirmed`, `cancelled`, default=`pending`), `total_amount` (DecimalField, max_digits=10, decimal_places=2), `created_at`, `updated_at`
-- [ ] 6.1.3 — Adicionar `history = HistoricalRecords()` em `Order`
-- [ ] 6.1.4 — Implementar `__str__` de `Order` retornando `f'Pedido #{self.pk}'`
-- [ ] 6.1.5 — Implementar model `OrderItem` com campos: `order` (FK Order, related_name='items'), `ticket_type` (FK tickets.TicketType), `quantity` (PositiveIntegerField), `unit_price` (DecimalField, max_digits=10, decimal_places=2), `created_at`, `updated_at`
-- [ ] 6.1.6 — Implementar property `subtotal` em `OrderItem` retornando `self.quantity * self.unit_price`
-- [ ] 6.1.7 — Adicionar `history = HistoricalRecords()` em `OrderItem`
-- [ ] 6.1.8 — Gerar e aplicar migration
+- [x] 6.1.1 — Criar `orders/models.py`
+- [x] 6.1.2 — Implementar model `Order` com campos: `buyer` (FK settings.AUTH_USER_MODEL), `status` (CharField, choices: `pending`, `confirmed`, `cancelled`, default=`pending`), `total_amount` (DecimalField, max_digits=10, decimal_places=2), `created_at`, `updated_at`
+- [x] 6.1.3 — Adicionar `history = HistoricalRecords()` em `Order`
+- [x] 6.1.4 — Implementar `__str__` de `Order` retornando `f'Pedido #{self.pk}'`
+- [x] 6.1.5 — Implementar model `OrderItem` com campos: `order` (FK Order, related_name='items'), `ticket_type` (FK tickets.TicketType), `quantity` (PositiveIntegerField), `unit_price` (DecimalField, max_digits=10, decimal_places=2), `created_at`, `updated_at`
+- [x] 6.1.6 — Implementar property `subtotal` em `OrderItem` retornando `self.quantity * self.unit_price`
+- [x] 6.1.7 — Adicionar `history = HistoricalRecords()` em `OrderItem`
+- [x] 6.1.8 — Gerar e aplicar migration
 
 #### Tarefa 6.2 — Admin de `Order`
-- [ ] 6.2.1 — Criar `OrderItemInline(TabularInline)` em `orders/admin.py`
-- [ ] 6.2.2 — Registrar `Order` com `inlines = [OrderItemInline]`
-- [ ] 6.2.3 — Configurar `list_display = ['pk', 'buyer', 'status', 'total_amount', 'created_at']`
-- [ ] 6.2.4 — Configurar `list_filter = ['status']`
+- [x] 6.2.1 — Criar `OrderItemInline(TabularInline)` em `orders/admin.py`
+- [x] 6.2.2 — Registrar `Order` com `inlines = [OrderItemInline]`
+- [x] 6.2.3 — Configurar `list_display = ['pk', 'buyer', 'status', 'total_amount', 'created_at']`
+- [x] 6.2.4 — Configurar `list_filter = ['status']`
 
 #### Tarefa 6.3 — Formulário e Views de `Order`
-- [ ] 6.3.1 — Criar `orders/forms.py` com `OrderCreateForm(Form)` com campos: `ticket_type_id` (HiddenInput) e `quantity` (IntegerField, min_value=1)
-- [ ] 6.3.2 — Criar `OrderCreateView(LoginRequiredMixin, View)` com métodos `get` e `post`
-- [ ] 6.3.3 — No `post`: dentro de `transaction.atomic()`, buscar `TicketType` com `select_for_update()` pelo `ticket_type_id`
-- [ ] 6.3.4 — Verificar se `ticket_type.available_quantity >= quantity`; se não, adicionar mensagem de erro e redirecionar
-- [ ] 6.3.5 — Incrementar `ticket_type.sold_quantity += quantity` e salvar
-- [ ] 6.3.6 — Criar `Order` com `buyer=request.user`, `status='pending'`, `total_amount = quantity * ticket_type.price`
-- [ ] 6.3.7 — Criar `OrderItem` vinculando `order`, `ticket_type`, `quantity` e `unit_price = ticket_type.price`
-- [ ] 6.3.8 — Redirecionar para detalhe do pedido criado
-- [ ] 6.3.9 — Criar `OrderListView(LoginRequiredMixin, ListView)` filtrando `buyer=request.user`
-- [ ] 6.3.10 — Criar `OrderDetailView(LoginRequiredMixin, DetailView)` verificando `order.buyer == request.user`
+- [x] 6.3.1 — Criar `orders/forms.py` com `OrderCreateForm(Form)` com campos: `ticket_type_id` (HiddenInput) e `quantity` (IntegerField, min_value=1)
+- [x] 6.3.2 — Criar `OrderCreateView(LoginRequiredMixin, View)` com métodos `get` e `post`
+- [x] 6.3.3 — No `post`: dentro de `transaction.atomic()`, buscar `TicketType` com `select_for_update()` pelo `ticket_type_id`
+- [x] 6.3.4 — Verificar se `ticket_type.available_quantity >= quantity`; se não, adicionar mensagem de erro e redirecionar
+- [x] 6.3.5 — Incrementar `ticket_type.sold_quantity += quantity` e salvar
+- [x] 6.3.6 — Criar `Order` com `buyer=request.user`, `status='pending'`, `total_amount = quantity * ticket_type.price`
+- [x] 6.3.7 — Criar `OrderItem` vinculando `order`, `ticket_type`, `quantity` e `unit_price = ticket_type.price`
+- [x] 6.3.8 — Redirecionar para detalhe do pedido criado
+- [x] 6.3.9 — Criar `OrderListView(LoginRequiredMixin, ListView)` filtrando `buyer=request.user`
+- [x] 6.3.10 — Criar `OrderDetailView(LoginRequiredMixin, DetailView)` verificando `order.buyer == request.user`
 
 #### Tarefa 6.4 — Templates de `Order`
-- [ ] 6.4.1 — Criar `templates/orders/order_list.html` com tabela de pedidos, badges de status e link para detalhe
-- [ ] 6.4.2 — Criar `templates/orders/order_detail.html` com itens, valores subtotais, total e status
-- [ ] 6.4.3 — No `order_detail.html`, listar os `Ticket`s emitidos com link para cada um (se pedido confirmado)
-- [ ] 6.4.4 — No `event_detail.html`, adicionar formulário de criação de pedido com seleção de quantidade para cada tipo de ingresso
+- [x] 6.4.1 — Criar `templates/orders/order_list.html` com tabela de pedidos, badges de status e link para detalhe
+- [x] 6.4.2 — Criar `templates/orders/order_detail.html` com itens, valores subtotais, total e status
+- [x] 6.4.3 — No `order_detail.html`, listar os `Ticket`s emitidos com link para cada um (se pedido confirmado)
+- [x] 6.4.4 — No `event_detail.html`, adicionar formulário de criação de pedido com seleção de quantidade para cada tipo de ingresso
 
 #### Tarefa 6.5 — URLs de `Order`
-- [ ] 6.5.1 — Criar `orders/urls.py` com `app_name = 'orders'`
-- [ ] 6.5.2 — Definir rotas: `pedidos/` → lista, `pedidos/<int:pk>/` → detalhe, `pedidos/criar/` → criar
-- [ ] 6.5.3 — Incluir em `core/urls.py`
+- [x] 6.5.1 — Criar `orders/urls.py` com `app_name = 'orders'`
+- [x] 6.5.2 — Definir rotas: `pedidos/` → lista, `pedidos/<int:pk>/` → detalhe, `pedidos/criar/` → criar
+- [x] 6.5.3 — Incluir em `core/urls.py`
 
 ---
 
-### Sprint 7 — App `payments` e Emissão Automática de Ingressos
+### Sprint 7 — App `payments` e Emissão Automática de Ingressos ✅
 
 **Objetivo:** Registro de pagamento e emissão automática de `Ticket`s individuais via signal.
 
 #### Tarefa 7.1 — Model `Payment`
-- [ ] 7.1.1 — Criar `payments/models.py` com model `Payment`
-- [ ] 7.1.2 — Campos: `order` (OneToOneField orders.Order, related_name='payment'), `method` (CharField, choices: `cash`, `pix`, `credit_card`, `debit_card`), `status` (CharField, choices: `pending`, `confirmed`, `cancelled`, default=`pending`), `amount` (DecimalField), `paid_at` (DateTimeField, null=True, blank=True), `created_at`, `updated_at`
-- [ ] 7.1.3 — Adicionar `history = HistoricalRecords()`
-- [ ] 7.1.4 — Implementar `__str__` retornando `f'Pagamento #{self.pk} — Pedido #{self.order.pk}'`
-- [ ] 7.1.5 — Gerar e aplicar migration
+- [x] 7.1.1 — Criar `payments/models.py` com model `Payment`
+- [x] 7.1.2 — Campos: `order` (OneToOneField orders.Order, related_name='payment'), `method` (CharField, choices: `cash`, `pix`, `credit_card`, `debit_card`), `status` (CharField, choices: `pending`, `confirmed`, `cancelled`, default=`pending`), `amount` (DecimalField), `paid_at` (DateTimeField, null=True, blank=True), `created_at`, `updated_at`
+- [x] 7.1.3 — Adicionar `history = HistoricalRecords()`
+- [x] 7.1.4 — Implementar `__str__` retornando `f'Pagamento #{self.pk} — Pedido #{self.order.pk}'`
+- [x] 7.1.5 — Gerar e aplicar migration
 
 #### Tarefa 7.2 — Signal de emissão de ingressos
-- [ ] 7.2.1 — Criar `payments/signals.py`
-- [ ] 7.2.2 — Implementar função `emit_tickets_on_payment_confirmed(sender, instance, created, **kwargs)`
-- [ ] 7.2.3 — Condição de disparo: `not created` (atualização) e `instance.status == 'confirmed'`
-- [ ] 7.2.4 — Dentro de `transaction.atomic()`: atualizar `instance.order.status = 'confirmed'` e `instance.order.save()`
-- [ ] 7.2.5 — Para cada `OrderItem` do pedido, criar `item.quantity` instâncias de `Ticket` com `order_item=item` (código e UUID gerados automaticamente pelo `save()` do model)
-- [ ] 7.2.6 — Verificar antes de criar tickets se eles ainda não existem (para idempotência do signal)
-- [ ] 7.2.7 — Conectar o signal: `post_save.connect(emit_tickets_on_payment_confirmed, sender=Payment)`
-- [ ] 7.2.8 — Criar `payments/apps.py` com `PaymentsConfig` importando os signals em `ready()`
+- [x] 7.2.1 — Criar `payments/signals.py`
+- [x] 7.2.2 — Implementar função `emit_tickets_on_payment_confirmed(sender, instance, created, **kwargs)`
+- [x] 7.2.3 — Condição de disparo: `not created` (atualização) e `instance.status == 'confirmed'`
+- [x] 7.2.4 — Dentro de `transaction.atomic()`: atualizar `instance.order.status = 'confirmed'` e `instance.order.save()`
+- [x] 7.2.5 — Para cada `OrderItem` do pedido, criar `item.quantity` instâncias de `Ticket` com `order_item=item` (código e UUID gerados automaticamente pelo `save()` do model)
+- [x] 7.2.6 — Verificar antes de criar tickets se eles ainda não existem (para idempotência do signal)
+- [x] 7.2.7 — Conectar o signal: `post_save.connect(emit_tickets_on_payment_confirmed, sender=Payment)`
+- [x] 7.2.8 — Criar `payments/apps.py` com `PaymentsConfig` importando os signals em `ready()`
 
 #### Tarefa 7.3 — Admin de `Payment`
-- [ ] 7.3.1 — Registrar `Payment` em `payments/admin.py`
-- [ ] 7.3.2 — Configurar `list_display = ['pk', 'order', 'method', 'status', 'amount', 'paid_at']`
-- [ ] 7.3.3 — Configurar `list_filter = ['status', 'method']`
+- [x] 7.3.1 — Registrar `Payment` em `payments/admin.py`
+- [x] 7.3.2 — Configurar `list_display = ['pk', 'order', 'method', 'status', 'amount', 'paid_at']`
+- [x] 7.3.3 — Configurar `list_filter = ['status', 'method']`
 
 #### Tarefa 7.4 — Formulário e Views de `Payment`
-- [ ] 7.4.1 — Criar `payments/forms.py` com `PaymentForm(ModelForm)` com campos: `method`, `amount`
-- [ ] 7.4.2 — Aplicar classes TailwindCSS nos widgets
-- [ ] 7.4.3 — Criar `PaymentCreateView(LoginRequiredMixin, CreateView)`
-- [ ] 7.4.4 — Em `form_valid`: buscar `Order` pelo `order_pk` da URL; validar que `order.buyer == request.user`; setar `form.instance.order = order`; redirecionar para sucesso
+- [x] 7.4.1 — Criar `payments/forms.py` com `PaymentForm(ModelForm)` com campos: `method`, `amount`
+- [x] 7.4.2 — Aplicar classes TailwindCSS nos widgets
+- [x] 7.4.3 — Criar `PaymentCreateView(LoginRequiredMixin, CreateView)`
+- [x] 7.4.4 — Em `form_valid`: buscar `Order` pelo `order_pk` da URL; validar que `order.buyer == request.user`; setar `form.instance.order = order`; redirecionar para sucesso
 - [ ] 7.4.5 — Criar `PaymentUpdateStatusView(LoginRequiredMixin, UpdateView)` apenas com campo `status` para atualização manual
 
 #### Tarefa 7.5 — Templates de `Payment`
-- [ ] 7.5.1 — Criar `templates/payments/payment_form.html` exibindo resumo do pedido (evento, itens, total) e formulário de pagamento
-- [ ] 7.5.2 — Criar `templates/payments/payment_success.html` com confirmação, valor pago e links para cada ingresso emitido
+- [x] 7.5.1 — Criar `templates/payments/payment_form.html` exibindo resumo do pedido (evento, itens, total) e formulário de pagamento
+- [x] 7.5.2 — Criar `templates/payments/payment_success.html` com confirmação, valor pago e links para cada ingresso emitido
 
 #### Tarefa 7.6 — URLs de `Payment`
-- [ ] 7.6.1 — Criar `payments/urls.py` com `app_name = 'payments'`
-- [ ] 7.6.2 — Definir rotas: `pedidos/<int:order_pk>/pagar/` → criar pagamento, `pagamento/<int:pk>/sucesso/` → sucesso, `pagamento/<int:pk>/status/` → atualizar status
-- [ ] 7.6.3 — Incluir em `core/urls.py`
+- [x] 7.6.1 — Criar `payments/urls.py` com `app_name = 'payments'`
+- [x] 7.6.2 — Definir rotas: `pedidos/<int:order_pk>/pagar/` → criar pagamento, `pagamento/<int:pk>/sucesso/` → sucesso, `pagamento/<int:pk>/status/` → atualizar status
+- [x] 7.6.3 — Incluir em `core/urls.py`
 
 ---
 
-### Sprint 8 — Validação de Portaria (QR Code + Código Manual)
+### Sprint 8 — Validação de Portaria (QR Code + Código Manual) ✅
 
 **Objetivo:** Tela de validação com leitura de QR Code via câmera e digitação manual de código.
 
 #### Tarefa 8.1 — View de Validação
-- [ ] 8.1.1 — Criar `TicketValidateView(LoginRequiredMixin, View)` em `tickets/views.py`
-- [ ] 8.1.2 — Método `GET`: renderizar `templates/tickets/validate.html` sem contexto de resultado
-- [ ] 8.1.3 — Método `POST`: obter `code` do `request.POST`, fazer strip e uppercase
-- [ ] 8.1.4 — Buscar `Ticket.objects.filter(code=code).first()`
-- [ ] 8.1.5 — Se `ticket` é `None`: retornar contexto com `result = 'invalid'`
-- [ ] 8.1.6 — Se `ticket.is_used` é `True`: retornar contexto com `result = 'already_used'`, `ticket` e `ticket.used_at`
-- [ ] 8.1.7 — Se ingresso válido e não usado: chamar `ticket.mark_as_used()` e retornar contexto com `result = 'success'` e `ticket`
-- [ ] 8.1.8 — Em todos os casos de POST, renderizar o mesmo template com o contexto de resultado (sem redirect, para manter foco no campo)
+- [x] 8.1.1 — Criar `TicketValidateView(LoginRequiredMixin, View)` em `tickets/views.py`
+- [x] 8.1.2 — Método `GET`: renderizar `templates/tickets/validate.html` sem contexto de resultado
+- [x] 8.1.3 — Método `POST`: obter `code` do `request.POST`, fazer strip e uppercase
+- [x] 8.1.4 — Buscar `Ticket.objects.filter(code=code).first()`
+- [x] 8.1.5 — Se `ticket` é `None`: retornar contexto com `result = 'invalid'`
+- [x] 8.1.6 — Se `ticket.is_used` é `True`: retornar contexto com `result = 'already_used'`, `ticket` e `ticket.used_at`
+- [x] 8.1.7 — Se ingresso válido e não usado: chamar `ticket.mark_as_used()` e retornar contexto com `result = 'success'` e `ticket`
+- [x] 8.1.8 — Em todos os casos de POST, renderizar o mesmo template com o contexto de resultado (sem redirect, para manter foco no campo)
 
 #### Tarefa 8.2 — Template de Validação
-- [ ] 8.2.1 — Criar `templates/tickets/validate.html` extendendo `base_dashboard.html`
-- [ ] 8.2.2 — Seção de câmera: elemento `<video id="video">` e `<canvas id="canvas">` para captura de frames
-- [ ] 8.2.3 — Botão "Ativar câmera" que chama `getUserMedia` via JavaScript
-- [ ] 8.2.4 — Incluir `jsQR` via CDN: `<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>`
-- [ ] 8.2.5 — Implementar loop JS com `requestAnimationFrame` que captura frame do vídeo no canvas, chama `jsQR(imageData, ...)` e, ao detectar código, preenche o campo `<input name="code">` e submete o formulário via `form.submit()`
-- [ ] 8.2.6 — Seção de digitação manual: `<form method="POST">` com `{% csrf_token %}`, campo `<input name="code" type="text">` com `autofocus`, `oninput="this.value = this.value.toUpperCase()"` e botão "Validar"
-- [ ] 8.2.7 — Seção de resultado: exibir bloco condicional baseado em `{{ result }}`
-- [ ] 8.2.8 — Bloco `result == 'success'`: card verde com ✅, nome do evento, tipo de ingresso, nome do titular, mensagem de inutilização
-- [ ] 8.2.9 — Bloco `result == 'already_used'`: card vermelho com ❌, data e hora da utilização anterior formatada em pt-BR
-- [ ] 8.2.10 — Bloco `result == 'invalid'`: card amarelo com ⚠️ e mensagem de código não encontrado
-- [ ] 8.2.11 — Após renderizar qualquer resultado, usar JS para limpar o campo de código e aplicar `autofocus` para nova leitura
+- [x] 8.2.1 — Criar `templates/tickets/validate.html` extendendo `base_dashboard.html`
+- [x] 8.2.2 — Seção de câmera: elemento `<video id="video">` e `<canvas id="canvas">` para captura de frames
+- [x] 8.2.3 — Botão "Ativar câmera" que chama `getUserMedia` via JavaScript
+- [x] 8.2.4 — Incluir `jsQR` via CDN: `<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>`
+- [x] 8.2.5 — Implementar loop JS com `requestAnimationFrame` que captura frame do vídeo no canvas, chama `jsQR(imageData, ...)` e, ao detectar código, preenche o campo `<input name="code">` e submete o formulário via `form.submit()`
+- [x] 8.2.6 — Seção de digitação manual: `<form method="POST">` com `{% csrf_token %}`, campo `<input name="code" type="text">` com `autofocus`, `oninput="this.value = this.value.toUpperCase()"` e botão "Validar"
+- [x] 8.2.7 — Seção de resultado: exibir bloco condicional baseado em `{{ result }}`
+- [x] 8.2.8 — Bloco `result == 'success'`: card verde com ✅, nome do evento, tipo de ingresso, nome do titular, mensagem de inutilização
+- [x] 8.2.9 — Bloco `result == 'already_used'`: card vermelho com ❌, data e hora da utilização anterior formatada em pt-BR
+- [x] 8.2.10 — Bloco `result == 'invalid'`: card amarelo com ⚠️ e mensagem de código não encontrado
+- [x] 8.2.11 — Após renderizar qualquer resultado, usar JS para limpar o campo de código e aplicar `autofocus` para nova leitura
 
 #### Tarefa 8.3 — URLs de Validação
-- [ ] 8.3.1 — Adicionar rota `portaria/validar/` em `tickets/urls.py` apontando para `TicketValidateView`
-- [ ] 8.3.2 — Incluir link "🚪 Validar Ingresso" na sidebar do dashboard
+- [x] 8.3.1 — Adicionar rota `portaria/validar/` em `tickets/urls.py` apontando para `TicketValidateView`
+- [x] 8.3.2 — Incluir link "🚪 Validar Ingresso" na sidebar do dashboard
 
 ---
 
-### Sprint 9 — Polimento e Refinamento de UI
+### Sprint 9 — Polimento e Refinamento de UI ✅
 
 **Objetivo:** Consistência visual em todas as telas, mensagens e UX.
 
 #### Tarefa 9.1 — Mensagens flash do sistema
-- [ ] 9.1.1 — Estilizar `templates/components/messages.html` com classes TailwindCSS por tag (`success`, `error`, `warning`, `info`)
-- [ ] 9.1.2 — Adicionar botão de fechar em cada mensagem via `onclick="this.parentElement.remove()"`
-- [ ] 9.1.3 — Confirmar que o partial está incluído em `base.html` logo abaixo da navbar
+- [x] 9.1.1 — Estilizar `templates/components/messages.html` com classes TailwindCSS por tag (`success`, `error`, `warning`, `info`)
+- [x] 9.1.2 — Adicionar botão de fechar em cada mensagem via `onclick="this.parentElement.remove()"`
+- [x] 9.1.3 — Confirmar que o partial está incluído em `base.html` logo abaixo da navbar
 
 #### Tarefa 9.2 — Páginas de erro
-- [ ] 9.2.1 — Criar `templates/404.html` extendendo `base.html` com mensagem amigável e link para o início
-- [ ] 9.2.2 — Criar `templates/500.html` extendendo `base.html` com mensagem de erro interno
-- [ ] 9.2.3 — Configurar `handler404` e `handler500` em `core/urls.py`
+- [x] 9.2.1 — Criar `templates/404.html` extendendo `base.html` com mensagem amigável e link para o início
+- [x] 9.2.2 — Criar `templates/500.html` extendendo `base.html` com mensagem de erro interno
+- [x] 9.2.3 — Configurar `handler404` e `handler500` em `core/urls.py`
 - [ ] 9.2.4 — Definir `DEBUG = False` em ambiente de teste para validar as páginas de erro
 
 #### Tarefa 9.3 — Responsividade mobile
-- [ ] 9.3.1 — Implementar menu hambúrguer na navbar para mobile usando JavaScript vanilla e classes `hidden/block`
-- [ ] 9.3.2 — Tornar sidebar collapsible em telas < `md` com botão de toggle
-- [ ] 9.3.3 — Testar tela de validação de portaria em dispositivo mobile (câmera, campo de código, botões grandes)
-- [ ] 9.3.4 — Adicionar `@media print` no card de ingresso para ocultar navbar/sidebar e otimizar impressão
+- [x] 9.3.1 — Implementar menu hambúrguer na navbar para mobile usando JavaScript vanilla e classes `hidden/block`
+- [x] 9.3.2 — Tornar sidebar collapsible em telas < `md` com botão de toggle
+- [x] 9.3.3 — Testar tela de validação de portaria em dispositivo mobile (câmera, campo de código, botões grandes)
+- [x] 9.3.4 — Adicionar `@media print` no card de ingresso para ocultar navbar/sidebar e otimizar impressão
 
 #### Tarefa 9.4 — Acessibilidade básica
-- [ ] 9.4.1 — Adicionar `aria-label` em botões sem texto descritivo (ex: botão de fechar mensagem)
-- [ ] 9.4.2 — Garantir contraste mínimo WCAG AA em todos os textos sobre fundos coloridos
-- [ ] 9.4.3 — Adicionar `autofocus` no campo de código após cada validação na portaria via JS
+- [x] 9.4.1 — Adicionar `aria-label` em botões sem texto descritivo (ex: botão de fechar mensagem)
+- [x] 9.4.2 — Garantir contraste mínimo WCAG AA em todos os textos sobre fundos coloridos
+- [x] 9.4.3 — Adicionar `autofocus` no campo de código após cada validação na portaria via JS
 
 ---
 

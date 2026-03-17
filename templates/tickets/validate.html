@@ -1,0 +1,165 @@
+{% extends 'base_dashboard.html' %}
+
+{% block dashboard_content %}
+<!-- Header -->
+<div class="bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 rounded-2xl px-8 py-10 mb-8 shadow-lg">
+  <h1 class="text-3xl font-bold text-white mb-1">Validação de Ingressos</h1>
+  <p class="text-white/80 text-base">Leia o QR Code ou digite o código do ingresso para validar a entrada.</p>
+</div>
+
+<div class="max-w-xl mx-auto flex flex-col gap-6">
+
+  <!-- Câmera (opcional) -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-slate-700 font-semibold text-lg mb-4">Leitura por QR Code</h2>
+
+    <button id="btn-camera"
+            type="button"
+            class="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl transition-colors text-sm">
+      Ativar Câmera
+    </button>
+
+    <video id="video" class="w-full rounded-xl mt-4 hidden" autoplay playsinline></video>
+    <canvas id="canvas" class="hidden"></canvas>
+  </div>
+
+  <!-- Formulário de digitação manual -->
+  <div class="bg-white rounded-2xl shadow p-6">
+    <h2 class="text-slate-700 font-semibold text-lg mb-4">Digitação Manual</h2>
+
+    <form id="validate-form" method="POST">
+      {% csrf_token %}
+      <input id="code-input"
+             type="text"
+             name="code"
+             placeholder="VNL-XXXXX"
+             oninput="this.value = this.value.toUpperCase()"
+             autocomplete="off"
+             class="w-full text-center text-2xl font-mono font-bold tracking-widest uppercase rounded-xl border-2 border-slate-200 px-6 py-4 focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+      <button type="submit"
+              class="w-full mt-4 py-4 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white font-bold rounded-xl hover:opacity-90 transition-opacity">
+        Validar Ingresso
+      </button>
+    </form>
+  </div>
+
+  <!-- Resultado -->
+  {% if result == 'success' %}
+  <div class="bg-emerald-900 rounded-2xl shadow p-8 flex flex-col items-center gap-4 text-white">
+    <div class="text-6xl">✅</div>
+    <p class="text-2xl font-bold">Ingresso Válido!</p>
+    <div class="w-full bg-emerald-800 rounded-xl px-6 py-4 text-sm flex flex-col gap-2 mt-2">
+      <div class="flex justify-between">
+        <span class="text-emerald-300 font-medium">Evento</span>
+        <span class="font-semibold">{{ ticket.order_item.ticket_type.event.name }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-emerald-300 font-medium">Tipo</span>
+        <span class="font-semibold">{{ ticket.order_item.ticket_type.name }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-emerald-300 font-medium">Titular</span>
+        <span class="font-semibold">
+          {% with buyer=ticket.order_item.order.buyer %}
+            {{ buyer.get_full_name|default:buyer.username }}
+          {% endwith %}
+        </span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-emerald-300 font-medium">Código</span>
+        <span class="font-mono font-bold tracking-widest">{{ ticket.code }}</span>
+      </div>
+    </div>
+    <p class="text-emerald-300 text-sm mt-1">Ingresso marcado como utilizado.</p>
+  </div>
+
+  {% elif result == 'already_used' %}
+  <div class="bg-red-700 rounded-2xl shadow p-8 flex flex-col items-center gap-4 text-white">
+    <div class="text-6xl">❌</div>
+    <p class="text-2xl font-bold">Ingresso Já Utilizado</p>
+    <div class="w-full bg-red-800 rounded-xl px-6 py-4 text-sm flex flex-col gap-2 mt-2">
+      <div class="flex justify-between">
+        <span class="text-red-300 font-medium">Código</span>
+        <span class="font-mono font-bold tracking-widest">{{ ticket.code }}</span>
+      </div>
+      <div class="flex justify-between">
+        <span class="text-red-300 font-medium">Utilizado em</span>
+        <span class="font-semibold">{{ ticket.used_at|date:'d/m/Y \à\s H:i' }}</span>
+      </div>
+    </div>
+  </div>
+
+  {% elif result == 'invalid' %}
+  <div class="bg-amber-500 rounded-2xl shadow p-8 flex flex-col items-center gap-4 text-white">
+    <div class="text-6xl">⚠️</div>
+    <p class="text-2xl font-bold">Código não encontrado</p>
+    <p class="text-amber-100 text-sm">Verifique o código e tente novamente.</p>
+  </div>
+  {% endif %}
+
+</div>
+{% endblock dashboard_content %}
+
+{% block extra_scripts %}
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+<script>
+  // Foco e limpeza de campo após resultado
+  document.addEventListener('DOMContentLoaded', function () {
+    const input = document.getElementById('code-input');
+    {% if result %}
+      input.value = '';
+    {% endif %}
+    input.focus();
+  });
+
+  // Câmera para leitura de QR Code
+  (function () {
+    const btnCamera = document.getElementById('btn-camera');
+    const video = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    const form = document.getElementById('validate-form');
+    const codeInput = document.getElementById('code-input');
+    let scanning = false;
+
+    btnCamera.addEventListener('click', function () {
+      if (scanning) return;
+
+      navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
+        .then(function (stream) {
+          video.srcObject = stream;
+          video.classList.remove('hidden');
+          btnCamera.textContent = 'Câmera ativa — aponte para o QR Code';
+          btnCamera.disabled = true;
+          scanning = true;
+          requestAnimationFrame(tick);
+        })
+        .catch(function () {
+          btnCamera.textContent = 'Câmera não disponível';
+        });
+    });
+
+    function tick() {
+      if (video.readyState !== video.HAVE_ENOUGH_DATA) {
+        requestAnimationFrame(tick);
+        return;
+      }
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const qr = jsQR(imageData.data, imageData.width, imageData.height);
+
+      if (qr && qr.data) {
+        codeInput.value = qr.data.trim().toUpperCase();
+        video.srcObject.getTracks().forEach(function (t) { t.stop(); });
+        form.submit();
+        return;
+      }
+
+      requestAnimationFrame(tick);
+    }
+  }());
+</script>
+{% endblock extra_scripts %}

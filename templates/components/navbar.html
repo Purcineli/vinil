@@ -1,17 +1,101 @@
 <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-100 shadow-sm">
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-    <a href="/" class="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">🎵 Vinil</a>
-    <div class="flex items-center gap-3">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between h-16">
+
+      <!-- Logo -->
+      <a href="/" class="text-xl font-bold bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent shrink-0">
+        🎵 Vinil
+      </a>
+
+      <!-- Links desktop -->
+      <div class="hidden md:flex items-center gap-3">
+        {% if user.is_authenticated %}
+          <a href="/dashboard/" class="text-sm text-slate-600 hover:text-violet-600 font-medium transition-colors">Dashboard</a>
+          <form method="post" action="/logout/">
+            {% csrf_token %}
+            <button type="submit" class="text-sm text-slate-600 hover:text-rose-600 font-medium transition-colors">Sair</button>
+          </form>
+        {% else %}
+          <a href="/login/" class="text-sm text-slate-600 hover:text-violet-600 font-medium transition-colors">Entrar</a>
+          <a href="/cadastro/" class="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity">Cadastre-se</a>
+        {% endif %}
+      </div>
+
+      <!-- Botão hambúrguer (mobile) -->
+      <button id="nav-hamburger"
+              type="button"
+              aria-label="Abrir menu"
+              aria-expanded="false"
+              aria-controls="nav-mobile-menu"
+              class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg text-slate-600 hover:text-violet-600 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+        <!-- Ícone hambúrguer -->
+        <svg id="icon-hamburger" class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+        <!-- Ícone fechar -->
+        <svg id="icon-close" class="w-5 h-5 hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+
+    </div>
+  </div>
+
+  <!-- Menu mobile -->
+  <div id="nav-mobile-menu"
+       class="hidden md:hidden border-t border-slate-100 bg-white/95 backdrop-blur-md">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-col gap-1">
       {% if user.is_authenticated %}
-        <a href="/dashboard/" class="text-sm text-slate-600 hover:text-violet-600 font-medium transition-colors">Dashboard</a>
-        <form method="post" action="/logout/">
+        <a href="/dashboard/"
+           class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+          Dashboard
+        </a>
+        <form method="post" action="/logout/" class="w-full">
           {% csrf_token %}
-          <button type="submit" class="text-sm text-slate-600 hover:text-rose-600 font-medium transition-colors">Sair</button>
+          <button type="submit"
+                  class="w-full text-left flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-rose-600 hover:bg-rose-50 transition-colors">
+            Sair
+          </button>
         </form>
       {% else %}
-        <a href="/login/" class="text-sm text-slate-600 hover:text-violet-600 font-medium transition-colors">Entrar</a>
-        <a href="/cadastro/" class="px-4 py-2 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity">Cadastre-se</a>
+        <a href="/login/"
+           class="flex items-center gap-2 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-700 hover:text-violet-600 hover:bg-violet-50 transition-colors">
+          Entrar
+        </a>
+        <a href="/cadastro/"
+           class="flex items-center justify-center gap-2 mx-3 my-1 px-4 py-2.5 rounded-xl bg-gradient-to-r from-violet-600 to-fuchsia-500 text-white text-sm font-semibold hover:opacity-90 transition-opacity">
+          Cadastre-se
+        </a>
       {% endif %}
     </div>
   </div>
 </nav>
+
+<script>
+  (function () {
+    var btn = document.getElementById('nav-hamburger');
+    var menu = document.getElementById('nav-mobile-menu');
+    var iconHamburger = document.getElementById('icon-hamburger');
+    var iconClose = document.getElementById('icon-close');
+
+    if (!btn || !menu) return;
+
+    btn.addEventListener('click', function () {
+      var isOpen = !menu.classList.contains('hidden');
+
+      if (isOpen) {
+        menu.classList.add('hidden');
+        iconHamburger.classList.remove('hidden');
+        iconClose.classList.add('hidden');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.setAttribute('aria-label', 'Abrir menu');
+      } else {
+        menu.classList.remove('hidden');
+        iconHamburger.classList.add('hidden');
+        iconClose.classList.remove('hidden');
+        btn.setAttribute('aria-expanded', 'true');
+        btn.setAttribute('aria-label', 'Fechar menu');
+      }
+    });
+  }());
+</script>

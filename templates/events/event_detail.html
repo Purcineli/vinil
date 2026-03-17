@@ -192,7 +192,7 @@
 
         {% if ticket_types %}
 
-          <ul class="space-y-3" role="list" aria-label="Tipos de ingresso disponíveis">
+          <ul class="space-y-3" id="ticket-list" role="list" aria-label="Tipos de ingresso disponíveis">
             {% for tt in ticket_types %}
               <li class="relative rounded-xl border overflow-hidden
                          {% if tt.available_quantity == 0 %}border-slate-200 bg-slate-50{% else %}border-slate-200 bg-white hover:border-violet-200 hover:shadow-sm transition-all duration-200{% endif %}">
@@ -249,7 +249,7 @@
                     </div>
                   </div>
 
-                  {# Buy button #}
+                  {# Buy button / form #}
                   <div class="mt-3">
                     {% if tt.available_quantity == 0 %}
                       <button type="button"
@@ -259,11 +259,21 @@
                         Esgotado
                       </button>
                     {% else %}
-                      <a href="#"
-                         class="block w-full text-center py-2 px-4 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white text-xs font-bold rounded-lg hover:opacity-90 hover:shadow-md transition-all duration-200"
-                         aria-label="Comprar ingresso {{ tt.name }} por R$ {{ tt.price|floatformat:2 }}">
-                        Comprar
-                      </a>
+                      <form method="get" action="{% url 'orders:create' %}" class="flex items-center gap-2">
+                        <input type="hidden" name="ticket_type_id" value="{{ tt.pk }}">
+                        <input type="number"
+                               name="quantity"
+                               value="1"
+                               min="1"
+                               max="{{ tt.available_quantity }}"
+                               aria-label="Quantidade de ingressos {{ tt.name }}"
+                               class="w-14 border border-slate-200 rounded-lg px-2 py-1.5 text-xs text-slate-700 text-center focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition">
+                        <button type="submit"
+                                class="flex-1 py-2 px-3 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white text-xs font-bold rounded-lg hover:opacity-90 hover:shadow-md active:scale-95 transition-all duration-200"
+                                aria-label="Comprar ingresso {{ tt.name }} por R$ {{ tt.price|floatformat:2 }}">
+                          Comprar
+                        </button>
+                      </form>
                     {% endif %}
                   </div>
                 </div>
@@ -272,18 +282,18 @@
             {% endfor %}
           </ul>
 
-          {# Total CTA — only shown if at least one available #}
+          {# Quick-buy CTA — links to order create with first available ticket type #}
           {% for tt in ticket_types %}
             {% if tt.available_quantity > 0 %}
-              <a href="#"
-                 class="mt-5 flex items-center justify-center gap-2 w-full py-3 px-4 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white text-sm font-bold rounded-xl hover:opacity-90 hover:shadow-lg transition-all duration-200"
+              <a href="{% url 'orders:create' %}?ticket_type_id={{ tt.pk }}"
+                 class="mt-5 flex items-center justify-center gap-2 w-full py-3 px-4 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white text-sm font-bold rounded-xl hover:opacity-90 hover:shadow-lg active:scale-[0.98] transition-all duration-200"
                  aria-label="Comprar ingressos para {{ event.name }}">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
                 Comprar ingresso
               </a>
-              {% comment %}break after first available{% endcomment %}
+              {% comment %}Render only once — for the first available ticket type{% endcomment %}
               {% if forloop.first %}{% endif %}
             {% endif %}
           {% endfor %}

@@ -6,9 +6,66 @@
 
 {% block content %}
 <div class="flex min-h-screen">
-  {% include 'components/sidebar.html' %}
-  <main class="flex-1 p-8 overflow-y-auto bg-slate-50">
-    {% block dashboard_content %}{% endblock %}
+
+  <!-- Overlay mobile (fecha sidebar ao clicar fora) -->
+  <div id="sidebar-overlay"
+       class="fixed inset-0 bg-black/50 z-20 hidden md:hidden"
+       onclick="closeSidebar()"
+       aria-hidden="true"></div>
+
+  <!-- Sidebar -->
+  <div id="sidebar-wrapper"
+       class="fixed md:static inset-y-0 left-0 z-30 transform -translate-x-full md:translate-x-0 transition-transform duration-300 ease-in-out md:transition-none shrink-0">
+    {% include 'components/sidebar.html' %}
+  </div>
+
+  <!-- Conteúdo principal -->
+  <main class="flex-1 min-w-0 overflow-y-auto bg-slate-50">
+
+    <!-- Topbar mobile -->
+    <div class="sticky top-0 z-10 flex items-center gap-3 px-4 py-3 bg-white border-b border-slate-100 shadow-sm md:hidden">
+      <button id="sidebar-toggle"
+              type="button"
+              aria-label="Abrir menu lateral"
+              onclick="openSidebar()"
+              class="flex items-center justify-center w-10 h-10 rounded-xl text-slate-600 hover:text-violet-600 hover:bg-slate-100 transition-colors focus:outline-none focus:ring-2 focus:ring-violet-500">
+        <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+      <a href="/" class="text-lg font-bold bg-gradient-to-r from-violet-600 to-fuchsia-500 bg-clip-text text-transparent">
+        🎵 Vinil
+      </a>
+    </div>
+
+    <div class="p-6 md:p-8">
+      {% include 'components/messages.html' %}
+      {% block dashboard_content %}{% endblock %}
+    </div>
+
   </main>
+
 </div>
+
+<script>
+  function openSidebar() {
+    var sidebar = document.getElementById('sidebar-wrapper');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar) return;
+    sidebar.classList.remove('-translate-x-full');
+    sidebar.classList.add('translate-x-0');
+    if (overlay) overlay.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden', 'md:overflow-auto');
+  }
+
+  function closeSidebar() {
+    var sidebar = document.getElementById('sidebar-wrapper');
+    var overlay = document.getElementById('sidebar-overlay');
+    if (!sidebar) return;
+    sidebar.classList.remove('translate-x-0');
+    sidebar.classList.add('-translate-x-full');
+    if (overlay) overlay.classList.add('hidden');
+    document.body.classList.remove('overflow-hidden', 'md:overflow-auto');
+  }
+</script>
 {% endblock %}

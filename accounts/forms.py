@@ -1,3 +1,5 @@
+import uuid
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django import forms
@@ -10,7 +12,7 @@ _TAILWIND_INPUT = (
 
 
 class CustomUserCreationForm(UserCreationForm):
-    """Formulário de cadastro com campo de e-mail obrigatório."""
+    """Formulário de cadastro usando apenas e-mail — sem campo username."""
 
     email = forms.EmailField(
         required=True,
@@ -23,11 +25,14 @@ class CustomUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
         model = User
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('email', 'password1', 'password2')
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        for field_name in ('username', 'password1', 'password2'):
+        # username is not in fields, but UserCreationForm.Meta still references it
+        # on the parent Meta; ensure it is removed from the rendered field list.
+        self.fields.pop('username', None)
+        for field_name in ('password1', 'password2'):
             self.fields[field_name].widget.attrs.update({'class': _TAILWIND_INPUT})
 
     def clean_email(self):
@@ -40,7 +45,13 @@ class CustomUserCreationForm(UserCreationForm):
 
     def save(self, commit=True):
         user = super().save(commit=False)
-        user.email = self.cleaned_data['email'].lower()
+        email = self.cleaned_data['email'].lower()
+        user.email = email
+        # Generate a unique username from the local part of the e-mail address.
+        # A short random suffix guarantees uniqueness without exposing the full e-mail.
+        base = email.split('@')[0][:20]
+        suffix = uuid.uuid4().hex[:8]
+        user.username = f'{base}_{suffix}'
         if commit:
             user.save()
         return user
