@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from tickets.admin import TicketTypeInline
+
 from .models import Event
 
 
@@ -9,3 +11,4 @@ class EventAdmin(admin.ModelAdmin):
     list_filter = ['is_active', 'start_date']
     search_fields = ['name', 'location']
     list_editable = ['is_active']
+    inlines = [TicketTypeInline]

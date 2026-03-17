@@ -153,42 +153,42 @@
 
 ---
 
-### Sprint 4 — App `tickets` — Parte 1: Tipos de Ingresso
+### Sprint 4 — App `tickets` — Parte 1: Tipos de Ingresso ✅
 
 **Objetivo:** Múltiplos tipos de ingresso por evento, com controle de disponibilidade.
 
 #### Tarefa 4.1 — Model `TicketType`
-- [ ] 4.1.1 — Criar `tickets/models.py` com model `TicketType`
-- [ ] 4.1.2 — Campos: `event` (FK Event, related_name='ticket_types'), `name` (CharField 100), `description` (TextField, blank=True), `price` (DecimalField, max_digits=10, decimal_places=2), `total_quantity` (PositiveIntegerField), `sold_quantity` (PositiveIntegerField, default=0), `created_at` (auto_now_add), `updated_at` (auto_now)
-- [ ] 4.1.3 — Adicionar `history = HistoricalRecords()`
-- [ ] 4.1.4 — Implementar property `available_quantity` retornando `self.total_quantity - self.sold_quantity`
-- [ ] 4.1.5 — Implementar property `is_available` retornando `self.available_quantity > 0`
-- [ ] 4.1.6 — Implementar `__str__` retornando `f'{self.event.name} — {self.name}'`
-- [ ] 4.1.7 — Definir `class Meta` com `ordering = ['price']`
-- [ ] 4.1.8 — Gerar e aplicar migration
+- [x] 4.1.1 — Criar `tickets/models.py` com model `TicketType`
+- [x] 4.1.2 — Campos: `event` (FK Event, related_name='ticket_types'), `name` (CharField 100), `description` (TextField, blank=True), `price` (DecimalField, max_digits=10, decimal_places=2), `total_quantity` (PositiveIntegerField), `sold_quantity` (PositiveIntegerField, default=0), `created_at` (auto_now_add), `updated_at` (auto_now)
+- [x] 4.1.3 — Adicionar `history = HistoricalRecords()`
+- [x] 4.1.4 — Implementar property `available_quantity` retornando `self.total_quantity - self.sold_quantity`
+- [x] 4.1.5 — Implementar property `is_available` retornando `self.available_quantity > 0`
+- [x] 4.1.6 — Implementar `__str__` retornando `f'{self.event.name} — {self.name}'`
+- [x] 4.1.7 — Definir `class Meta` com `ordering = ['price']`
+- [x] 4.1.8 — Gerar e aplicar migration
 
 #### Tarefa 4.2 — Admin de `TicketType`
-- [ ] 4.2.1 — Criar `TicketTypeInline(TabularInline)` em `tickets/admin.py` com `model = TicketType` e `extra = 1`
-- [ ] 4.2.2 — Adicionar `TicketTypeInline` ao admin de `Event` em `events/admin.py`
-- [ ] 4.2.3 — Registrar `TicketType` separadamente com `list_display = ['event', 'name', 'price', 'total_quantity', 'sold_quantity']`
+- [x] 4.2.1 — Criar `TicketTypeInline(TabularInline)` em `tickets/admin.py` com `model = TicketType` e `extra = 1`
+- [x] 4.2.2 — Adicionar `TicketTypeInline` ao admin de `Event` em `events/admin.py`
+- [x] 4.2.3 — Registrar `TicketType` separadamente com `list_display = ['event', 'name', 'price', 'total_quantity', 'sold_quantity']`
 
 #### Tarefa 4.3 — Formulário e Views de `TicketType`
-- [ ] 4.3.1 — Criar `tickets/forms.py` com `TicketTypeForm(ModelForm)` com campos: `name`, `description`, `price`, `total_quantity`
-- [ ] 4.3.2 — Aplicar classes TailwindCSS nos widgets
-- [ ] 4.3.3 — Criar `TicketTypeCreateView(LoginRequiredMixin, CreateView)`
-- [ ] 4.3.4 — Em `form_valid`: buscar `Event` pelo `event_pk` da URL; validar que `event.organizer == request.user`; setar `form.instance.event = event`
-- [ ] 4.3.5 — Criar `TicketTypeUpdateView(LoginRequiredMixin, UpdateView)`
-- [ ] 4.3.6 — Em `TicketTypeForm.clean_total_quantity()`: validar que o novo valor não é menor que `sold_quantity`
+- [x] 4.3.1 — Criar `tickets/forms.py` com `TicketTypeForm(ModelForm)` com campos: `name`, `description`, `price`, `total_quantity`
+- [x] 4.3.2 — Aplicar classes TailwindCSS nos widgets
+- [x] 4.3.3 — Criar `TicketTypeCreateView(LoginRequiredMixin, CreateView)`
+- [x] 4.3.4 — Em `form_valid`: buscar `Event` pelo `event_pk` da URL; validar que `event.organizer == request.user`; setar `form.instance.event = event`
+- [x] 4.3.5 — Criar `TicketTypeUpdateView(LoginRequiredMixin, UpdateView)`
+- [x] 4.3.6 — Em `TicketTypeForm.clean_total_quantity()`: validar que o novo valor não é menor que `sold_quantity`
 
 #### Tarefa 4.4 — Templates de `TicketType`
-- [ ] 4.4.1 — Criar `templates/tickets/ticket_type_form.html`
-- [ ] 4.4.2 — Na `event_detail.html`, listar todos os tipos do evento em cards com nome, descrição, preço e disponibilidade
-- [ ] 4.4.3 — Exibir badge "Esgotado" e botão desabilitado para tipos com `available_quantity == 0`
-- [ ] 4.4.4 — Exibir link "Adicionar tipo de ingresso" na página do evento apenas para o organizador autenticado
+- [x] 4.4.1 — Criar `templates/tickets/ticket_type_form.html`
+- [x] 4.4.2 — Na `event_detail.html`, listar todos os tipos do evento em cards com nome, descrição, preço e disponibilidade
+- [x] 4.4.3 — Exibir badge "Esgotado" e botão desabilitado para tipos com `available_quantity == 0`
+- [x] 4.4.4 — Exibir link "Adicionar tipo de ingresso" na página do evento apenas para o organizador autenticado
 
 #### Tarefa 4.5 — URLs de `TicketType`
-- [ ] 4.5.1 — Criar `tickets/urls.py` com `app_name = 'tickets'`
-- [ ] 4.5.2 — Definir rotas: `eventos/<int:event_pk>/ingressos/criar/` → criar tipo, `ingressos/<int:pk>/editar/` → editar tipo
+- [x] 4.5.1 — Criar `tickets/urls.py` com `app_name = 'tickets'`
+- [x] 4.5.2 — Definir rotas: `eventos/<int:event_pk>/ingressos/criar/` → criar tipo, `ingressos/<int:pk>/editar/` → editar tipo
 
 ---
 
