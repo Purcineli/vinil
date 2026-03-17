@@ -2,12 +2,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from django.views.generic import CreateView, UpdateView
+from django.views.generic import CreateView, DetailView, ListView, UpdateView
 
 from events.models import Event
 
 from .forms import TicketTypeForm
-from .models import TicketType
+from .models import Ticket, TicketType
 
 
 class TicketTypeCreateView(LoginRequiredMixin, CreateView):
@@ -53,3 +53,33 @@ class TicketTypeUpdateView(LoginRequiredMixin, UpdateView):
         context = super().get_context_data(**kwargs)
         context['event'] = self.object.event
         return context
+
+
+class TicketDetailView(LoginRequiredMixin, DetailView):
+    model = Ticket
+    template_name = 'tickets/ticket_detail.html'
+    context_object_name = 'ticket'
+    slug_field = 'uuid'
+    slug_url_kwarg = 'uuid'
+
+    def get_queryset(self):
+        return Ticket.objects.filter(
+            order_item__order__buyer=self.request.user
+        ).select_related(
+            'order_item__ticket_type__event',
+            'order_item__order__buyer',
+        )
+
+
+class MyTicketsListView(LoginRequiredMixin, ListView):
+    model = Ticket
+    template_name = 'tickets/my_tickets.html'
+    context_object_name = 'tickets'
+
+    def get_queryset(self):
+        return Ticket.objects.filter(
+            order_item__order__buyer=self.request.user
+        ).select_related(
+            'order_item__ticket_type__event',
+            'order_item__order',
+        ).order_by('order_item__ticket_type__event__start_date', 'code')

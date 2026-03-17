@@ -192,43 +192,43 @@
 
 ---
 
-### Sprint 5 — App `tickets` — Parte 2: Ingresso Individual e QR Code
+### Sprint 5 — App `tickets` — Parte 2: Ingresso Individual e QR Code ✅
 
 **Objetivo:** Emissão de `Ticket` individual por unidade comprada, com código único e QR Code.
 
 #### Tarefa 5.1 — Model `Ticket`
-- [ ] 5.1.1 — Adicionar model `Ticket` em `tickets/models.py`
-- [ ] 5.1.2 — Campos: `order_item` (FK 'orders.OrderItem', related_name='tickets'), `uuid` (UUIDField, default=uuid.uuid4, unique=True, editable=False), `code` (CharField, max_length=10, unique=True, blank=True), `is_used` (BooleanField, default=False), `used_at` (DateTimeField, null=True, blank=True), `created_at` (auto_now_add), `updated_at` (auto_now)
-- [ ] 5.1.3 — Adicionar `history = HistoricalRecords()`
-- [ ] 5.1.4 — Implementar `__str__` retornando `f'Ingresso {self.code}'`
-- [ ] 5.1.5 — Implementar método estático `generate_code()` retornando string no formato `VNL-XXXXX` com `random.choices` de `string.ascii_uppercase + string.digits` com k=5
-- [ ] 5.1.6 — Sobrescrever `save()`: se `self.code` está vazio, chamar `generate_code()` em loop com try/except `IntegrityError` até sucesso
-- [ ] 5.1.7 — Implementar método `get_qrcode_base64()` que instancia `qrcode.make(self.code)`, salva em `BytesIO`, retorna `base64.b64encode(buffer.getvalue()).decode('utf-8')`
-- [ ] 5.1.8 — Implementar método `mark_as_used()` que seta `self.is_used = True`, `self.used_at = timezone.now()`, e chama `self.save()`
-- [ ] 5.1.9 — Gerar e aplicar migration
+- [x] 5.1.1 — Adicionar model `Ticket` em `tickets/models.py`
+- [x] 5.1.2 — Campos: `order_item` (FK 'orders.OrderItem', related_name='tickets'), `uuid` (UUIDField, default=uuid.uuid4, unique=True, editable=False), `code` (CharField, max_length=10, unique=True, blank=True), `is_used` (BooleanField, default=False), `used_at` (DateTimeField, null=True, blank=True), `created_at` (auto_now_add), `updated_at` (auto_now)
+- [x] 5.1.3 — Adicionar `history = HistoricalRecords()`
+- [x] 5.1.4 — Implementar `__str__` retornando `f'Ingresso {self.code}'`
+- [x] 5.1.5 — Implementar método estático `generate_code()` retornando string no formato `VNL-XXXXX` com `random.choices` de `string.ascii_uppercase + string.digits` com k=5
+- [x] 5.1.6 — Sobrescrever `save()`: se `self.code` está vazio, chamar `generate_code()` em loop com try/except `IntegrityError` até sucesso
+- [x] 5.1.7 — Implementar método `get_qrcode_base64()` que instancia `qrcode.make(self.code)`, salva em `BytesIO`, retorna `base64.b64encode(buffer.getvalue()).decode('utf-8')`
+- [x] 5.1.8 — Implementar método `mark_as_used()` que seta `self.is_used = True`, `self.used_at = timezone.now()`, e chama `self.save()`
+- [x] 5.1.9 — Gerar e aplicar migration (migration será aplicada na Sprint 6 junto com orders.OrderItem)
 
 #### Tarefa 5.2 — Admin de `Ticket`
-- [ ] 5.2.1 — Registrar `Ticket` em `tickets/admin.py`
-- [ ] 5.2.2 — Configurar `list_display = ['code', 'uuid', 'order_item', 'is_used', 'used_at', 'created_at']`
-- [ ] 5.2.3 — Configurar `list_filter = ['is_used']`
-- [ ] 5.2.4 — Configurar `search_fields = ['code', 'uuid']`
-- [ ] 5.2.5 — Tornar `uuid`, `code`, `is_used`, `used_at` como `readonly_fields` no admin
+- [x] 5.2.1 — Registrar `Ticket` em `tickets/admin.py`
+- [x] 5.2.2 — Configurar `list_display = ['code', 'uuid', 'order_item', 'is_used', 'used_at', 'created_at']`
+- [x] 5.2.3 — Configurar `list_filter = ['is_used']`
+- [x] 5.2.4 — Configurar `search_fields = ['code', 'uuid']`
+- [x] 5.2.5 — Tornar `uuid`, `code`, `is_used`, `used_at` como `readonly_fields` no admin
 
 #### Tarefa 5.3 — Views de `Ticket`
-- [ ] 5.3.1 — Criar `TicketDetailView(LoginRequiredMixin, DetailView)` buscando por `uuid`
-- [ ] 5.3.2 — Em `get_queryset()`: retornar apenas ingressos cujo comprador é `request.user`
-- [ ] 5.3.3 — Criar `MyTicketsListView(LoginRequiredMixin, ListView)` listando todos os ingressos do usuário autenticado via `order_item__order__buyer = request.user`
+- [x] 5.3.1 — Criar `TicketDetailView(LoginRequiredMixin, DetailView)` buscando por `uuid`
+- [x] 5.3.2 — Em `get_queryset()`: retornar apenas ingressos cujo comprador é `request.user`
+- [x] 5.3.3 — Criar `MyTicketsListView(LoginRequiredMixin, ListView)` listando todos os ingressos do usuário autenticado via `order_item__order__buyer = request.user`
 
 #### Tarefa 5.4 — Templates de `Ticket`
-- [ ] 5.4.1 — Criar `templates/tickets/ticket_detail.html` com card de ingresso completo (gradiente no header, QR Code, código, dados do evento e tipo)
-- [ ] 5.4.2 — Renderizar QR Code via `<img src="data:image/png;base64,{{ ticket.get_qrcode_base64 }}">`
-- [ ] 5.4.3 — Exibir código alfanumérico em fonte mono grande e legível
-- [ ] 5.4.4 — Exibir badge de status: "Válido" em verde ou "Utilizado em [data/hora]" em vermelho
-- [ ] 5.4.5 — Criar `templates/tickets/my_tickets.html` com lista de todos os ingressos do usuário, agrupados por evento
+- [x] 5.4.1 — Criar `templates/tickets/ticket_detail.html` com card de ingresso completo (gradiente no header, QR Code, código, dados do evento e tipo)
+- [x] 5.4.2 — Renderizar QR Code via `<img src="data:image/png;base64,{{ ticket.get_qrcode_base64 }}">`
+- [x] 5.4.3 — Exibir código alfanumérico em fonte mono grande e legível
+- [x] 5.4.4 — Exibir badge de status: "Válido" em verde ou "Utilizado em [data/hora]" em vermelho
+- [x] 5.4.5 — Criar `templates/tickets/my_tickets.html` com lista de todos os ingressos do usuário, agrupados por evento
 
 #### Tarefa 5.5 — URLs de `Ticket`
-- [ ] 5.5.1 — Adicionar rotas em `tickets/urls.py`: `meus-ingressos/` → lista, `ingressos/<uuid:uuid>/` → detalhe
-- [ ] 5.5.2 — Incluir em `core/urls.py`
+- [x] 5.5.1 — Adicionar rotas em `tickets/urls.py`: `meus-ingressos/` → lista, `ingressos/<uuid:uuid>/` → detalhe
+- [x] 5.5.2 — Incluir em `core/urls.py`
 
 ---
 
