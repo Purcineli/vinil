@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+
+{% block title %}Meu Perfil — Vinil{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-12 px-4">
+
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold text-slate-800">Meu Perfil</h1>
+    <p class="text-slate-500 mt-1">Informações da sua conta</p>
+  </div>
+
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 p-8">
+
+    <div class="flex items-center gap-4 mb-8">
+      <div class="w-16 h-16 rounded-full bg-gradient-to-br from-violet-600 via-fuchsia-500 to-pink-400 flex items-center justify-center text-white text-2xl font-bold">
+        {{ user.username|first|upper }}
+      </div>
+      <div>
+        <p class="text-lg font-semibold text-slate-800">{{ user.get_full_name|default:user.username }}</p>
+        <p class="text-slate-500 text-sm">{{ user.email }}</p>
+      </div>
+    </div>
+
+    <dl class="divide-y divide-slate-100">
+      <div class="py-4 flex justify-between">
+        <dt class="text-sm font-medium text-slate-500">Usuário</dt>
+        <dd class="text-sm text-slate-800">{{ user.username }}</dd>
+      </div>
+      <div class="py-4 flex justify-between">
+        <dt class="text-sm font-medium text-slate-500">E-mail</dt>
+        <dd class="text-sm text-slate-800">{{ user.email }}</dd>
+      </div>
+      <div class="py-4 flex justify-between">
+        <dt class="text-sm font-medium text-slate-500">Membro desde</dt>
+        <dd class="text-sm text-slate-800">{{ user.date_joined|date:'d/m/Y' }}</dd>
+      </div>
+    </dl>
+
+    <div class="mt-6">
+      <a href="{% url 'accounts:logout' %}"
+         class="inline-block bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white font-semibold py-2 px-6 rounded-xl hover:opacity-90 transition-opacity text-sm">
+        Sair da conta
+      </a>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

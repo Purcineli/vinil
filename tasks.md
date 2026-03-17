@@ -44,43 +44,43 @@
 
 ---
 
-### Sprint 1 — Autenticação com E-mail
+### Sprint 1 — Autenticação com E-mail ✅
 
 **Objetivo:** Login, cadastro e logout funcionando com e-mail no lugar de username.
 
 #### Tarefa 1.1 — Backend de autenticação customizado
-- [ ] 1.1.1 — Criar `accounts/backends.py`
-- [ ] 1.1.2 — Implementar classe `EmailBackend(ModelBackend)` que recebe `username` como e-mail e busca via `User.objects.get(email=username)`
-- [ ] 1.1.3 — Tratar `User.DoesNotExist` retornando `None`
-- [ ] 1.1.4 — Verificar `user.check_password(password)` e `user.is_active` antes de retornar o usuário
-- [ ] 1.1.5 — Registrar `'accounts.backends.EmailBackend'` em `settings.AUTHENTICATION_BACKENDS`
+- [x] 1.1.1 — Criar `accounts/backends.py`
+- [x] 1.1.2 — Implementar classe `EmailBackend(ModelBackend)` que recebe `username` como e-mail e busca via `User.objects.get(email=username)`
+- [x] 1.1.3 — Tratar `User.DoesNotExist` retornando `None`
+- [x] 1.1.4 — Verificar `user.check_password(password)` e `user.is_active` antes de retornar o usuário
+- [x] 1.1.5 — Registrar `'accounts.backends.EmailBackend'` em `settings.AUTHENTICATION_BACKENDS`
 
 #### Tarefa 1.2 — Formulários de autenticação
-- [ ] 1.2.1 — Criar `accounts/forms.py`
-- [ ] 1.2.2 — Implementar `CustomUserCreationForm(UserCreationForm)` com campo `email` obrigatório
-- [ ] 1.2.3 — Adicionar validação de e-mail único no método `clean_email()`
-- [ ] 1.2.4 — Implementar `CustomAuthenticationForm(AuthenticationForm)` alterando o label do campo `username` para "E-mail"
-- [ ] 1.2.5 — Aplicar classes TailwindCSS nos widgets de todos os campos via `attrs`
+- [x] 1.2.1 — Criar `accounts/forms.py`
+- [x] 1.2.2 — Implementar `CustomUserCreationForm(UserCreationForm)` com campo `email` obrigatório
+- [x] 1.2.3 — Adicionar validação de e-mail único no método `clean_email()`
+- [x] 1.2.4 — Implementar `CustomAuthenticationForm(AuthenticationForm)` alterando o label do campo `username` para "E-mail"
+- [x] 1.2.5 — Aplicar classes TailwindCSS nos widgets de todos os campos via `attrs`
 
 #### Tarefa 1.3 — Views de autenticação
-- [ ] 1.3.1 — Criar `accounts/views.py` com `RegisterView(CreateView)` usando `CustomUserCreationForm`
-- [ ] 1.3.2 — Em `RegisterView.form_valid`: salvar o formulário e redirecionar para `/login/`
-- [ ] 1.3.3 — Configurar `LoginView` nativo com `authentication_form = CustomAuthenticationForm`
-- [ ] 1.3.4 — Configurar `LogoutView` nativo com `next_page = '/'`
-- [ ] 1.3.5 — Criar `ProfileView(LoginRequiredMixin, TemplateView)` exibindo dados do usuário autenticado
+- [x] 1.3.1 — Criar `accounts/views.py` com `RegisterView(CreateView)` usando `CustomUserCreationForm`
+- [x] 1.3.2 — Em `RegisterView.form_valid`: salvar o formulário e redirecionar para `/login/`
+- [x] 1.3.3 — Configurar `LoginView` nativo com `authentication_form = CustomAuthenticationForm`
+- [x] 1.3.4 — Configurar `LogoutView` nativo com `next_page = '/'`
+- [x] 1.3.5 — Criar `ProfileView(LoginRequiredMixin, TemplateView)` exibindo dados do usuário autenticado
 
 #### Tarefa 1.4 — Templates de autenticação
-- [ ] 1.4.1 — Criar `templates/accounts/register.html` com layout centralizado, card branco e gradiente decorativo
-- [ ] 1.4.2 — Criar `templates/accounts/login.html` com layout centralizado, card branco e link para cadastro
-- [ ] 1.4.3 — Criar `templates/accounts/profile.html` exibindo nome, e-mail e data de cadastro
-- [ ] 1.4.4 — Em ambos os formulários, exibir erros de campo inline abaixo de cada input (usar `{{ form.field.errors }}`)
-- [ ] 1.4.5 — Em ambos os formulários, exibir erros globais do formulário (usar `{{ form.non_field_errors }}`)
+- [x] 1.4.1 — Criar `templates/accounts/register.html` com layout centralizado, card branco e gradiente decorativo
+- [x] 1.4.2 — Criar `templates/accounts/login.html` com layout centralizado, card branco e link para cadastro
+- [x] 1.4.3 — Criar `templates/accounts/profile.html` exibindo nome, e-mail e data de cadastro
+- [x] 1.4.4 — Em ambos os formulários, exibir erros de campo inline abaixo de cada input (usar `{{ form.field.errors }}`)
+- [x] 1.4.5 — Em ambos os formulários, exibir erros globais do formulário (usar `{{ form.non_field_errors }}`)
 
 #### Tarefa 1.5 — URLs de autenticação
-- [ ] 1.5.1 — Criar `accounts/urls.py` com `app_name = 'accounts'`
-- [ ] 1.5.2 — Definir rotas: `cadastro/` → `RegisterView`, `login/` → `LoginView`, `logout/` → `LogoutView`, `perfil/` → `ProfileView`
-- [ ] 1.5.3 — Incluir `accounts.urls` no `core/urls.py`
-- [ ] 1.5.4 — Testar manualmente o fluxo completo: cadastro → login → perfil → logout
+- [x] 1.5.1 — Criar `accounts/urls.py` com `app_name = 'accounts'`
+- [x] 1.5.2 — Definir rotas: `cadastro/` → `RegisterView`, `login/` → `LoginView`, `logout/` → `LogoutView`, `perfil/` → `ProfileView`
+- [x] 1.5.3 — Incluir `accounts.urls` no `core/urls.py`
+- [x] 1.5.4 — Testar manualmente o fluxo completo: cadastro → login → perfil → logout
 
 ---
 
