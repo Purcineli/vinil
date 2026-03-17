@@ -1,13 +1,14 @@
 from django.contrib import admin
 from django.urls import path, include
 
-from events.views import DashboardView
+from events.views import DashboardView, HomeView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', HomeView.as_view(), name='home'),
     path('dashboard/', DashboardView.as_view(), name='dashboard'),
     path('', include('accounts.urls')),
-    path('', include('events.urls')),
+    path('eventos/', include('events.urls')),
     path('', include('tickets.urls')),
     path('', include('orders.urls')),
     path('', include('payments.urls')),

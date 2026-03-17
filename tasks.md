@@ -104,52 +104,52 @@
 
 ---
 
-### Sprint 3 — App `events`
+### Sprint 3 — App `events` ✅
 
 **Objetivo:** CRUD de eventos completo com interface consistente.
 
 #### Tarefa 3.1 — Model `Event`
-- [ ] 3.1.1 — Criar `events/models.py` com model `Event`
-- [ ] 3.1.2 — Campos: `name` (CharField 200), `description` (TextField), `location` (CharField 200), `start_date` (DateTimeField), `end_date` (DateTimeField), `is_active` (BooleanField, default=False), `organizer` (FK settings.AUTH_USER_MODEL), `created_at` (auto_now_add), `updated_at` (auto_now)
-- [ ] 3.1.3 — Adicionar `history = HistoricalRecords()`
-- [ ] 3.1.4 — Implementar `__str__` retornando `self.name`
-- [ ] 3.1.5 — Implementar property `is_upcoming` retornando `self.start_date > timezone.now()`
-- [ ] 3.1.6 — Implementar `get_absolute_url()` usando `reverse('events:detail', kwargs={'pk': self.pk})`
-- [ ] 3.1.7 — Definir `class Meta` com `ordering = ['-start_date']`
-- [ ] 3.1.8 — Gerar migration com `makemigrations events`
-- [ ] 3.1.9 — Aplicar migration com `migrate`
+- [x] 3.1.1 — Criar `events/models.py` com model `Event`
+- [x] 3.1.2 — Campos: `name` (CharField 200), `description` (TextField), `location` (CharField 200), `start_date` (DateTimeField), `end_date` (DateTimeField), `is_active` (BooleanField, default=False), `organizer` (FK settings.AUTH_USER_MODEL), `created_at` (auto_now_add), `updated_at` (auto_now)
+- [x] 3.1.3 — Adicionar `history = HistoricalRecords()`
+- [x] 3.1.4 — Implementar `__str__` retornando `self.name`
+- [x] 3.1.5 — Implementar property `is_upcoming` retornando `self.start_date > timezone.now()`
+- [x] 3.1.6 — Implementar `get_absolute_url()` usando `reverse('events:detail', kwargs={'pk': self.pk})`
+- [x] 3.1.7 — Definir `class Meta` com `ordering = ['-start_date']`
+- [x] 3.1.8 — Gerar migration com `makemigrations events`
+- [x] 3.1.9 — Aplicar migration com `migrate`
 
 #### Tarefa 3.2 — Admin de `Event`
-- [ ] 3.2.1 — Registrar `Event` em `events/admin.py` com `@admin.register`
-- [ ] 3.2.2 — Configurar `list_display = ['name', 'organizer', 'start_date', 'is_active']`
-- [ ] 3.2.3 — Configurar `list_filter = ['is_active', 'start_date']`
-- [ ] 3.2.4 — Configurar `search_fields = ['name', 'location']`
-- [ ] 3.2.5 — Configurar `list_editable = ['is_active']`
+- [x] 3.2.1 — Registrar `Event` em `events/admin.py` com `@admin.register`
+- [x] 3.2.2 — Configurar `list_display = ['name', 'organizer', 'start_date', 'is_active']`
+- [x] 3.2.3 — Configurar `list_filter = ['is_active', 'start_date']`
+- [x] 3.2.4 — Configurar `search_fields = ['name', 'location']`
+- [x] 3.2.5 — Configurar `list_editable = ['is_active']`
 
 #### Tarefa 3.3 — Formulário de `Event`
-- [ ] 3.3.1 — Criar `events/forms.py` com `EventForm(ModelForm)`
-- [ ] 3.3.2 — Incluir campos: `name`, `description`, `location`, `start_date`, `end_date`
-- [ ] 3.3.3 — Usar `DateTimeInput` com `type='datetime-local'` para campos de data
-- [ ] 3.3.4 — Implementar `clean()` validando que `end_date >= start_date`
-- [ ] 3.3.5 — Aplicar classes TailwindCSS nos widgets via `attrs`
+- [x] 3.3.1 — Criar `events/forms.py` com `EventForm(ModelForm)`
+- [x] 3.3.2 — Incluir campos: `name`, `description`, `location`, `start_date`, `end_date`
+- [x] 3.3.3 — Usar `DateTimeInput` com `type='datetime-local'` para campos de data
+- [x] 3.3.4 — Implementar `clean()` validando que `end_date >= start_date`
+- [x] 3.3.5 — Aplicar classes TailwindCSS nos widgets via `attrs`
 
 #### Tarefa 3.4 — Views de `Event`
-- [ ] 3.4.1 — Criar `EventListView(ListView)` pública com `queryset = Event.objects.filter(is_active=True)`
-- [ ] 3.4.2 — Criar `EventDetailView(DetailView)` pública; passar tipos de ingresso do evento no contexto
-- [ ] 3.4.3 — Criar `EventCreateView(LoginRequiredMixin, CreateView)` com `form_class = EventForm`
-- [ ] 3.4.4 — Sobrescrever `form_valid` em `EventCreateView` para setar `form.instance.organizer = self.request.user`
-- [ ] 3.4.5 — Criar `EventUpdateView(LoginRequiredMixin, UpdateView)` verificando que `request.user == event.organizer`
-- [ ] 3.4.6 — Criar `EventToggleActiveView(LoginRequiredMixin, View)` recebendo POST e invertendo `is_active`
+- [x] 3.4.1 — Criar `EventListView(ListView)` pública com `queryset = Event.objects.filter(is_active=True)`
+- [x] 3.4.2 — Criar `EventDetailView(DetailView)` pública; passar tipos de ingresso do evento no contexto
+- [x] 3.4.3 — Criar `EventCreateView(LoginRequiredMixin, CreateView)` com `form_class = EventForm`
+- [x] 3.4.4 — Sobrescrever `form_valid` em `EventCreateView` para setar `form.instance.organizer = self.request.user`
+- [x] 3.4.5 — Criar `EventUpdateView(LoginRequiredMixin, UpdateView)` verificando que `request.user == event.organizer`
+- [x] 3.4.6 — Criar `EventToggleActiveView(LoginRequiredMixin, View)` recebendo POST e invertendo `is_active`
 
 #### Tarefa 3.5 — Templates de `Event`
-- [ ] 3.5.1 — Criar `templates/events/event_list.html` com grid de cards e botão para criar evento
-- [ ] 3.5.2 — Criar `templates/events/event_detail.html` com info do evento, seção de tipos de ingresso e botão de compra
-- [ ] 3.5.3 — Criar `templates/events/event_form.html` reutilizável para criação e edição
+- [x] 3.5.1 — Criar `templates/events/event_list.html` com grid de cards e botão para criar evento
+- [x] 3.5.2 — Criar `templates/events/event_detail.html` com info do evento, seção de tipos de ingresso e botão de compra
+- [x] 3.5.3 — Criar `templates/events/event_form.html` reutilizável para criação e edição
 
 #### Tarefa 3.6 — URLs de `Event`
-- [ ] 3.6.1 — Criar `events/urls.py` com `app_name = 'events'`
-- [ ] 3.6.2 — Definir rotas: `''` → lista, `<pk>/` → detalhe, `criar/` → criar, `<pk>/editar/` → editar, `<pk>/toggle/` → toggle ativo
-- [ ] 3.6.3 — Incluir em `core/urls.py` com prefixo `eventos/`
+- [x] 3.6.1 — Criar `events/urls.py` com `app_name = 'events'`
+- [x] 3.6.2 — Definir rotas: `''` → lista, `<pk>/` → detalhe, `criar/` → criar, `<pk>/editar/` → editar, `<pk>/toggle/` → toggle ativo
+- [x] 3.6.3 — Incluir em `core/urls.py` com prefixo `eventos/`
 
 ---
 

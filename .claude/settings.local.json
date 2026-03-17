@@ -20,7 +20,8 @@
       "Bash(for f:*)",
       "Bash(do echo:*)",
       "Read(//c/Users/Alessandro/OneDrive/Área de Trabalho/Projetos Python/vinil/$f/**)",
-      "Bash(done)"
+      "Bash(done)",
+      "Bash(ls:*)"
     ]
   }
 }
