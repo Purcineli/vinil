@@ -84,23 +84,23 @@
 
 ---
 
-### Sprint 2 — Site Público e Dashboard Base
+### Sprint 2 — Site Público e Dashboard Base ✅
 
 **Objetivo:** Página inicial pública com eventos e dashboard interno pós-login.
 
 #### Tarefa 2.1 — Página inicial pública
-- [ ] 2.1.1 — Criar `HomeView(ListView)` em `events/views.py` com `queryset` filtrando eventos ativos, ordenados por `start_date`, limitados a 8
-- [ ] 2.1.2 — Criar `templates/public/home.html` extendendo `base.html`
-- [ ] 2.1.3 — Implementar seção hero com gradiente violet→fuchsia→pink, logo, tagline e dois botões CTA: "Cadastre-se" e "Ver Eventos"
-- [ ] 2.1.4 — Implementar seção de eventos: grid responsivo com cards de evento
-- [ ] 2.1.5 — Garantir responsividade: 1 coluna mobile, 2 tablet, 3-4 desktop
+- [x] 2.1.1 — Criar `HomeView(ListView)` em `events/views.py` com `queryset` filtrando eventos ativos, ordenados por `start_date`, limitados a 8
+- [x] 2.1.2 — Criar `templates/public/home.html` extendendo `base.html`
+- [x] 2.1.3 — Implementar seção hero com gradiente violet→fuchsia→pink, logo, tagline e dois botões CTA: "Cadastre-se" e "Ver Eventos"
+- [x] 2.1.4 — Implementar seção de eventos: grid responsivo com cards de evento
+- [x] 2.1.5 — Garantir responsividade: 1 coluna mobile, 2 tablet, 3-4 desktop
 
 #### Tarefa 2.2 — Dashboard base (pós-login)
-- [ ] 2.2.1 — Criar `DashboardView(LoginRequiredMixin, TemplateView)` que agrega contadores no contexto
-- [ ] 2.2.2 — Contadores no contexto: total de eventos ativos, total de pedidos do usuário, total de ingressos emitidos, total de ingressos já validados (utilizados)
-- [ ] 2.2.3 — Criar `templates/dashboard/index.html` extendendo `base_dashboard.html`
-- [ ] 2.2.4 — Exibir quatro cards de resumo com ícone, número e label para cada contador
-- [ ] 2.2.5 — Sidebar com links funcionais para todas as seções do dashboard
+- [x] 2.2.1 — Criar `DashboardView(LoginRequiredMixin, TemplateView)` que agrega contadores no contexto
+- [x] 2.2.2 — Contadores no contexto: total de eventos ativos, total de pedidos do usuário, total de ingressos emitidos, total de ingressos já validados (utilizados)
+- [x] 2.2.3 — Criar `templates/dashboard/index.html` extendendo `base_dashboard.html`
+- [x] 2.2.4 — Exibir quatro cards de resumo com ícone, número e label para cada contador
+- [x] 2.2.5 — Sidebar com links funcionais para todas as seções do dashboard
 
 ---
 

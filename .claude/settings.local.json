@@ -13,7 +13,14 @@
       "mcp__playwright__browser_fill_form",
       "mcp__playwright__browser_click",
       "mcp__playwright__browser_evaluate",
-      "mcp__playwright__browser_close"
+      "mcp__playwright__browser_close",
+      "mcp__filesystem__read_text_file",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__query-docs",
+      "Bash(for f:*)",
+      "Bash(do echo:*)",
+      "Read(//c/Users/Alessandro/OneDrive/Área de Trabalho/Projetos Python/vinil/$f/**)",
+      "Bash(done)"
     ]
   }
 }
