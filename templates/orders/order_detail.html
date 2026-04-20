@@ -182,20 +182,29 @@
 
   {% elif order.status == 'pending' %}
 
-    {# ====================== PENDING NOTICE ====================== #}
-    <div class="bg-amber-50 rounded-2xl border border-amber-200 p-5 flex items-start gap-4 mb-6">
+    {# ====================== PENDING NOTICE + CHECKOUT BUTTON ====================== #}
+    <div class="bg-amber-50 rounded-2xl border border-amber-200 p-5 flex items-start gap-4 mb-4">
       <div class="w-9 h-9 rounded-xl bg-amber-100 flex items-center justify-center shrink-0 mt-0.5" aria-hidden="true">
         <svg class="w-4.5 h-4.5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
           <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
         </svg>
       </div>
       <div>
-        <p class="text-sm font-bold text-amber-800">Aguardando confirmação de pagamento</p>
+        <p class="text-sm font-bold text-amber-800">Aguardando pagamento</p>
         <p class="text-xs text-amber-700 mt-0.5 leading-relaxed">
           Seus ingressos serão gerados automaticamente após a confirmação do pagamento.
         </p>
       </div>
     </div>
+
+    {# Único botão: leva para o checkout transparente que já unifica cartão, Pix e boleto #}
+    <a href="{% url 'payments:checkout_transparent' order.pk %}"
+       class="mb-6 w-full inline-flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-violet-600 via-fuchsia-500 to-pink-400 text-white text-sm font-bold rounded-2xl hover:opacity-90 hover:shadow-lg transition-all duration-200">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+      </svg>
+      Pagar (cartão, Pix ou boleto)
+    </a>
 
   {% elif order.status == 'cancelled' %}
 

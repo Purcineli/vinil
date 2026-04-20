@@ -1,0 +1,440 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Pagamento — {{ order }} — Vinil{% endblock %}
+
+{% block extra_head %}
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+{% endblock %}
+
+{% block dashboard_content %}
+
+<div class="max-w-2xl mx-auto">
+
+  {# ====================== BACK LINK ====================== #}
+  <a href="{% url 'orders:detail' order.pk %}"
+     class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600 font-medium mb-6 transition-colors duration-200 group">
+    <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Voltar para o pedido
+  </a>
+
+  {# ====================== PAGE HEADER ====================== #}
+  <div class="relative overflow-hidden bg-gradient-to-br from-violet-600 via-fuchsia-500 to-pink-400 rounded-2xl mb-8 shadow-lg">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="absolute bottom-0 left-1/3 w-48 h-48 rounded-full bg-pink-300/10 blur-3xl"></div>
+    </div>
+    <div class="relative px-8 py-8">
+      <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mb-1">Finalizar compra</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">Pagamento</h1>
+      <p class="text-white/70 text-sm mt-1.5">{{ order }}</p>
+    </div>
+  </div>
+
+  {# ====================== ORDER SUMMARY ====================== #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-slate-700">Resumo do pedido</h2>
+    </div>
+    <div class="divide-y divide-slate-50">
+      {% for item in order.items.all %}
+        <div class="px-6 py-4 flex items-center justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-0.5">{{ item.ticket_type.event.name }}</p>
+            <p class="text-sm font-bold text-slate-800">{{ item.ticket_type.name }}</p>
+            <p class="text-xs text-slate-500 mt-0.5">
+              {{ item.quantity }} ingresso{{ item.quantity|pluralize }} &times; R$&nbsp;{{ item.unit_price|floatformat:2 }}
+            </p>
+          </div>
+          <div class="shrink-0 text-right">
+            <p class="text-sm font-extrabold text-violet-700">R$&nbsp;{{ item.subtotal|floatformat:2 }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+      <span class="text-sm font-bold text-slate-600">Total</span>
+      <span class="text-xl font-extrabold text-violet-700">R$&nbsp;{{ order.total_amount|floatformat:2 }}</span>
+    </div>
+  </div>
+
+  {# ====================== PAYMENT BRICK CONTAINER ====================== #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-slate-700">Forma de pagamento</h2>
+    </div>
+
+    <div class="px-6 py-6">
+
+      {# Error banner — shown on API / validation errors #}
+      <div id="payment-error-banner"
+           class="hidden mb-4 rounded-xl bg-rose-50 border border-rose-200 px-4 py-3 flex items-start gap-3"
+           role="alert">
+        <svg class="w-4 h-4 text-rose-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+        <p id="payment-error-text" class="text-xs text-rose-700 font-medium"></p>
+      </div>
+
+      {# Spinner shown while Brick initialises #}
+      <div id="brick-loading" class="flex items-center justify-center py-10" aria-label="Carregando opções de pagamento">
+        <svg class="w-8 h-8 text-violet-400 animate-spin" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+      </div>
+
+      {# Payment Brick mounts here — handles card, Pix and boleto #}
+      <div id="paymentBrick_container"></div>
+
+      {# Processing overlay while AJAX call is in flight #}
+      <div id="processing-overlay"
+           class="hidden mt-4 rounded-xl bg-violet-50 border border-violet-200 px-4 py-4 flex items-center gap-3"
+           aria-live="polite">
+        <svg class="w-5 h-5 text-violet-500 animate-spin shrink-0" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5"/>
+          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+        </svg>
+        <p class="text-sm font-semibold text-violet-700">Processando pagamento, aguarde…</p>
+      </div>
+
+    </div>
+  </div>
+
+  {# ====================== PIX RESULT (rendered inline after submit) ====================== #}
+  <div id="pix-result" class="hidden bg-white rounded-2xl shadow-sm border border-emerald-200 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-emerald-100 flex items-center gap-3 bg-emerald-50">
+      <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-emerald-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-emerald-800">Pague com Pix</h2>
+    </div>
+    <div class="px-6 py-6 text-center">
+      <p class="text-sm text-slate-600 mb-4">
+        Escaneie o QR Code abaixo no seu aplicativo de banco ou copie o código Pix.
+        O pagamento é confirmado automaticamente em instantes.
+      </p>
+      <div class="flex justify-center mb-4">
+        <div class="p-3 bg-white border border-slate-200 rounded-xl shadow-sm inline-block">
+          <img id="pix-qrcode-img" src="" alt="QR Code Pix" class="w-44 h-44 block">
+        </div>
+      </div>
+      <div class="mb-4">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Pix Copia e Cola</p>
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+          <input id="pix-copy-code" type="text" readonly
+                 class="flex-1 text-xs font-mono text-slate-700 bg-transparent border-none outline-none min-w-0 truncate">
+          <button id="pix-copy-btn"
+                  class="shrink-0 px-3 py-1.5 bg-violet-600 text-white text-xs font-bold rounded-lg hover:bg-violet-700 transition-colors duration-200"
+                  onclick="copyPixCode()">
+            Copiar
+          </button>
+        </div>
+        <p id="pix-copy-feedback" class="hidden text-xs text-emerald-600 font-medium mt-1">Copiado!</p>
+      </div>
+      <a id="pix-ticket-link" href="#" target="_blank" rel="noopener"
+         class="inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold text-violet-700 border border-violet-200 rounded-xl hover:bg-violet-50 transition-colors duration-200">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+        </svg>
+        Abrir página do Pix
+      </a>
+      <p class="text-xs text-slate-400 mt-4">
+        Aguardando confirmação do pagamento. Seus ingressos serão gerados automaticamente.
+      </p>
+    </div>
+  </div>
+
+  {# ====================== BOLETO RESULT (rendered inline after submit) ====================== #}
+  <div id="boleto-result" class="hidden bg-white rounded-2xl shadow-sm border border-amber-200 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-amber-100 flex items-center gap-3 bg-amber-50">
+      <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-amber-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-amber-800">Boleto gerado</h2>
+    </div>
+    <div class="px-6 py-6">
+      <p class="text-sm text-slate-600 mb-4">
+        Seu boleto foi gerado. Pague até o vencimento para garantir seus ingressos.
+        A confirmação pode levar até 3 dias úteis.
+      </p>
+      <a id="boleto-ticket-link" href="#" target="_blank" rel="noopener"
+         class="mb-4 w-full inline-flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 text-white text-sm font-bold rounded-xl hover:bg-amber-600 transition-colors duration-200">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        Visualizar / imprimir boleto
+      </a>
+      <div id="boleto-barcode-section" class="hidden mt-3">
+        <p class="text-xs font-semibold text-slate-500 uppercase tracking-widest mb-2">Linha digitável</p>
+        <div class="flex items-center gap-2 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2">
+          <input id="boleto-digitable-line" type="text" readonly
+                 class="flex-1 text-xs font-mono text-slate-700 bg-transparent border-none outline-none min-w-0 truncate">
+          <button class="shrink-0 px-3 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-lg hover:bg-amber-600 transition-colors duration-200"
+                  onclick="copyBoletoLine()">
+            Copiar
+          </button>
+        </div>
+        <p id="boleto-copy-feedback" class="hidden text-xs text-emerald-600 font-medium mt-1">Copiado!</p>
+      </div>
+    </div>
+  </div>
+
+  {# ====================== SANDBOX NOTICE ====================== #}
+  {% if 'TEST' in public_key %}
+  <div class="rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 flex items-start gap-3 mb-4">
+    <svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+    </svg>
+    <p class="text-xs text-amber-700 font-medium">
+      Ambiente de testes ativo. Use os
+      <a href="https://www.mercadopago.com.br/developers/pt/docs/checkout-api/additional-content/your-integrations/test/test-cards"
+         target="_blank" rel="noopener" class="underline hover:text-amber-900">
+        cartões de teste do MercadoPago
+      </a>
+      para simular pagamentos.
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // ---------------------------------------------------------------------------
+  // Helpers
+  // ---------------------------------------------------------------------------
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+
+  const PROCESS_URL = '{% url "payments:checkout_transparent_process" order.pk %}';
+  const CSRF_TOKEN  = getCookie('csrftoken');
+  // Use parseFloat on the raw decimal string to avoid pt-br locale formatting
+  // (floatformat:2 outputs "150,00" in pt-br which breaks JS number parsing)
+  const TOTAL_AMOUNT = parseFloat('{{ order.total_amount }}');
+  const PAYER_EMAIL  = '{{ request.user.email|escapejs }}';
+
+  function showError(msg) {
+    const banner = document.getElementById('payment-error-banner');
+    document.getElementById('payment-error-text').textContent = msg;
+    banner.classList.remove('hidden');
+    banner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+
+  function hideError() {
+    document.getElementById('payment-error-banner').classList.add('hidden');
+  }
+
+  function showProcessing(on) {
+    document.getElementById('processing-overlay').classList.toggle('hidden', !on);
+  }
+
+  // Map card rejection codes to friendly Portuguese messages
+  const REJECTION_MESSAGES = {
+    'cc_rejected_insufficient_amount':   'Saldo ou limite insuficiente no cartão.',
+    'cc_rejected_bad_filled_card_number':'Número do cartão incorreto. Verifique e tente novamente.',
+    'cc_rejected_bad_filled_date':       'Data de vencimento incorreta.',
+    'cc_rejected_bad_filled_security_code': 'Código de segurança (CVV) incorreto.',
+    'cc_rejected_bad_filled_other':      'Dados do cartão incorretos. Verifique e tente novamente.',
+    'cc_rejected_blacklist':             'Cartão recusado pelo banco emissor.',
+    'cc_rejected_call_for_authorize':    'Cartão recusado. Entre em contato com seu banco.',
+    'cc_rejected_card_disabled':         'Cartão inativo. Entre em contato com seu banco.',
+    'cc_rejected_duplicated_payment':    'Pagamento duplicado detectado.',
+    'cc_rejected_high_risk':             'Pagamento recusado por segurança. Tente outro cartão.',
+    'cc_rejected_max_attempts':          'Número de tentativas excedido. Tente novamente mais tarde.',
+    'rejected_by_bank':                  'Pagamento recusado pelo banco.',
+    'rejected_insufficient_data':        'Dados insuficientes para processar o pagamento.',
+  };
+
+  function getRejectionMessage(detail) {
+    return REJECTION_MESSAGES[detail] || 'Pagamento recusado. Verifique os dados e tente novamente.';
+  }
+
+  // ---------------------------------------------------------------------------
+  // Pix result helpers
+  // ---------------------------------------------------------------------------
+  function showPixResult(data) {
+    document.getElementById('pix-qrcode-img').src =
+      'data:image/jpeg;base64,' + data.qr_code_base64;
+    document.getElementById('pix-copy-code').value = data.qr_code;
+    document.getElementById('pix-ticket-link').href  = data.ticket_url;
+    document.getElementById('pix-result').classList.remove('hidden');
+    document.getElementById('pix-result').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyPixCode() {
+    const input = document.getElementById('pix-copy-code');
+    navigator.clipboard.writeText(input.value).then(() => {
+      const fb = document.getElementById('pix-copy-feedback');
+      fb.classList.remove('hidden');
+      setTimeout(() => fb.classList.add('hidden'), 2500);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Boleto result helpers
+  // ---------------------------------------------------------------------------
+  function showBoletoResult(data) {
+    document.getElementById('boleto-ticket-link').href = data.ticket_url;
+    if (data.digitable_line) {
+      document.getElementById('boleto-digitable-line').value = data.digitable_line;
+      document.getElementById('boleto-barcode-section').classList.remove('hidden');
+    }
+    document.getElementById('boleto-result').classList.remove('hidden');
+    document.getElementById('boleto-result').scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function copyBoletoLine() {
+    const input = document.getElementById('boleto-digitable-line');
+    navigator.clipboard.writeText(input.value).then(() => {
+      const fb = document.getElementById('boleto-copy-feedback');
+      fb.classList.remove('hidden');
+      setTimeout(() => fb.classList.add('hidden'), 2500);
+    });
+  }
+
+  // ---------------------------------------------------------------------------
+  // Payment Brick initialisation
+  // ---------------------------------------------------------------------------
+  const mp = new MercadoPago('{{ public_key }}', { locale: 'pt-BR' });
+  const bricksBuilder = mp.bricks();
+
+  const renderPaymentBrick = async (bricksBuilder) => {
+    const settings = {
+      initialization: {
+        // Total amount shown in the Brick header
+        amount: TOTAL_AMOUNT,
+        // Pre-fill payer email so the user doesn't have to type it
+        payer: {
+          email: PAYER_EMAIL,
+        },
+      },
+      customization: {
+        // Enable all relevant Brazilian payment methods
+        paymentMethods: {
+          creditCard:    'all',
+          debitCard:     'all',
+          ticket:        'all',   // boleto
+          bankTransfer:  'all',   // Pix
+          // mercadoPago disabled — keeps users on our site (no wallet redirect)
+          mercadoPago:   'none',
+        },
+      },
+      callbacks: {
+        onReady: () => {
+          // Brick rendered — hide loading spinner
+          document.getElementById('brick-loading').classList.add('hidden');
+        },
+
+        // onSubmit is called when the buyer clicks the Brick's pay button.
+        // formData contains either a card token (cards) or payer + method info
+        // (Pix / boleto). We forward everything to our backend.
+        onSubmit: ({ selectedPaymentMethod, formData }) => {
+          hideError();
+          showProcessing(true);
+
+          // Build the payload expected by TransparentCheckoutProcessView
+          // The Brick sends selectedPaymentMethod as a string like
+          // 'credit_card', 'bank_transfer', 'ticket', etc.
+          const payload = {
+            payment_type: selectedPaymentMethod,
+            ...formData,
+          };
+
+          return new Promise((resolve, reject) => {
+            fetch(PROCESS_URL, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': CSRF_TOKEN,
+              },
+              body: JSON.stringify(payload),
+            })
+              .then((res) => res.json())
+              .then((data) => {
+                showProcessing(false);
+
+                if (data.error) {
+                  reject();
+                  showError(data.error);
+                  return;
+                }
+
+                if (data.payment_type === 'pix') {
+                  // Show QR code inline — do NOT navigate away
+                  resolve();
+                  showPixResult(data);
+                  return;
+                }
+
+                if (data.payment_type === 'boleto') {
+                  // Show boleto link inline — do NOT navigate away
+                  resolve();
+                  showBoletoResult(data);
+                  return;
+                }
+
+                // Card flow: redirect to result page
+                if (data.redirect_url) {
+                  resolve();
+                  window.location.href = data.redirect_url;
+                  return;
+                }
+
+                if (data.status === 'rejected') {
+                  reject();
+                  showError(getRejectionMessage(data.status_detail));
+                  return;
+                }
+
+                reject();
+                showError('Resposta inesperada do servidor. Tente novamente.');
+              })
+              .catch(() => {
+                showProcessing(false);
+                reject();
+                showError('Erro de conexão. Verifique sua internet e tente novamente.');
+              });
+          });
+        },
+
+        onError: (error) => {
+          // Brick-level errors: SDK loading failures, tokenisation issues, etc.
+          console.error('PaymentBrick error:', error);
+          document.getElementById('brick-loading').classList.add('hidden');
+          showError('Erro ao carregar o formulário de pagamento. Recarregue a página.');
+        },
+      },
+    };
+
+    window.paymentBrickController = await bricksBuilder.create(
+      'payment',
+      'paymentBrick_container',
+      settings,
+    );
+  };
+
+  renderPaymentBrick(bricksBuilder);
+</script>
+{% endblock %}

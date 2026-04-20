@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -56,6 +58,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'core.urls'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://trustee-bodies-que-letting.trycloudflare.com"
+]
 
 TEMPLATES = [
     {
@@ -130,3 +136,13 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
 LOGOUT_REDIRECT_URL = '/'
+
+# ---------------------------------------------------------------------------
+# MercadoPago
+# Credenciais lidas do .env — nunca hardcode aqui.
+# Obtenha em: https://www.mercadopago.com.br/developers/panel/app
+# ---------------------------------------------------------------------------
+MERCADOPAGO_ACCESS_TOKEN = config('MERCADOPAGO_ACCESS_TOKEN', default='')
+MERCADOPAGO_PUBLIC_KEY = config('MERCADOPAGO_PUBLIC_KEY', default='')
+# Segredo HMAC configurado na URL de webhook no painel do MP
+MERCADOPAGO_WEBHOOK_SECRET = config('MERCADOPAGO_WEBHOOK_SECRET', default='')

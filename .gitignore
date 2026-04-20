@@ -264,3 +264,11 @@ poetry.toml
 pyrightconfig.json
 
 # End of https://www.toptal.com/developers/gitignore/api/python,django
+# Claude Code
+.claude/
+
+# Playwright MCP
+.playwright-mcp/
+
+# Local env
+.env

@@ -1,0 +1,150 @@
+{% extends 'base_dashboard.html' %}
+
+{% block title %}Pagamento — {{ order }} — Vinil{% endblock %}
+
+{% block dashboard_content %}
+
+{# SDK JS do MercadoPago — carregado antes do bloco principal #}
+<script src="https://sdk.mercadopago.com/js/v2"></script>
+
+<div class="max-w-2xl mx-auto">
+
+  {# ====================== BACK LINK ====================== #}
+  <a href="{% url 'orders:detail' order.pk %}"
+     class="inline-flex items-center gap-2 text-sm text-slate-500 hover:text-violet-600 font-medium mb-6 transition-colors duration-200 group">
+    <svg class="w-4 h-4 group-hover:-translate-x-0.5 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Voltar para o pedido
+  </a>
+
+  {# ====================== PAGE HEADER ====================== #}
+  <div class="relative overflow-hidden bg-gradient-to-br from-violet-600 via-fuchsia-500 to-pink-400 rounded-2xl mb-8 shadow-lg">
+    <div class="absolute inset-0 overflow-hidden pointer-events-none" aria-hidden="true">
+      <div class="absolute -top-24 -right-24 w-64 h-64 rounded-full bg-white/10 blur-3xl"></div>
+      <div class="absolute bottom-0 left-1/3 w-48 h-48 rounded-full bg-pink-300/10 blur-3xl"></div>
+    </div>
+    <div class="relative px-8 py-8">
+      <p class="text-white/60 text-xs font-semibold uppercase tracking-widest mb-1">Finalizar compra</p>
+      <h1 class="text-2xl sm:text-3xl font-extrabold text-white leading-tight">Pagamento</h1>
+      <p class="text-white/70 text-sm mt-1.5">{{ order }}</p>
+    </div>
+  </div>
+
+  {# ====================== ORDER SUMMARY ====================== #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden mb-6">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-violet-100 to-fuchsia-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-violet-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-slate-700">Resumo do pedido</h2>
+    </div>
+
+    <div class="divide-y divide-slate-50">
+      {% for item in order.items.all %}
+        <div class="px-6 py-4 flex items-center justify-between gap-4">
+          <div class="flex-1 min-w-0">
+            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-0.5">
+              {{ item.ticket_type.event.name }}
+            </p>
+            <p class="text-sm font-bold text-slate-800">{{ item.ticket_type.name }}</p>
+            <p class="text-xs text-slate-500 mt-0.5">
+              {{ item.quantity }} ingresso{{ item.quantity|pluralize }} &times; R$&nbsp;{{ item.unit_price|floatformat:2 }}
+            </p>
+          </div>
+          <div class="shrink-0 text-right">
+            <p class="text-sm font-extrabold text-violet-700">R$&nbsp;{{ item.subtotal|floatformat:2 }}</p>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+
+    <div class="px-6 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between">
+      <span class="text-sm font-bold text-slate-600">Total</span>
+      <span class="text-xl font-extrabold text-violet-700">R$&nbsp;{{ order.total_amount|floatformat:2 }}</span>
+    </div>
+  </div>
+
+  {# ====================== CHECKOUT PRO BUTTON ====================== #}
+  <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center gap-3">
+      <div class="w-7 h-7 rounded-lg bg-gradient-to-br from-sky-100 to-blue-100 flex items-center justify-center shrink-0" aria-hidden="true">
+        <svg class="w-3.5 h-3.5 text-sky-600" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
+        </svg>
+      </div>
+      <h2 class="text-base font-bold text-slate-700">Pagar com MercadoPago</h2>
+    </div>
+
+    <div class="px-6 py-6">
+      <p class="text-sm text-slate-500 mb-5">
+        Você será redirecionado para o ambiente seguro do MercadoPago para concluir o pagamento.
+        Aceitamos cartão de crédito, débito, Pix, boleto e saldo na conta.
+      </p>
+
+      {# Container onde o SDK do MP injeta o botão de Wallet #}
+      <div id="wallet_container"></div>
+
+      {# Fallback: botão de redirect direto caso o SDK não carregue #}
+      <noscript>
+        <a href="{{ init_point }}"
+           class="mt-4 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 text-white text-sm font-bold rounded-xl hover:bg-sky-600 transition-colors duration-200">
+          Ir para o MercadoPago
+        </a>
+      </noscript>
+    </div>
+  </div>
+
+  {# Aviso de ambiente de testes #}
+  {% if 'TEST' in public_key %}
+  <div class="mt-4 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 flex items-start gap-3">
+    <svg class="w-4 h-4 text-amber-500 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+    </svg>
+    <p class="text-xs text-amber-700 font-medium">
+      Ambiente de testes ativo. Use os
+      <a href="https://www.mercadopago.com.br/developers/pt/docs/checkout-pro/additional-content/test-cards" target="_blank" rel="noopener" class="underline hover:text-amber-900">cartões de teste do MercadoPago</a>
+      para simular pagamentos.
+    </p>
+  </div>
+  {% endif %}
+
+</div>
+
+{# ====================== SDK INITIALIZATION ====================== #}
+<script>
+  // Inicializa o SDK com a Public Key (segura para o frontend)
+  const mp = new MercadoPago('{{ public_key }}', {
+    locale: 'pt-BR',
+  });
+
+  // Cria o botão de Wallet (Checkout Pro) no container
+  mp.bricks().create('wallet', 'wallet_container', {
+    initialization: {
+      preferenceId: '{{ preference_id }}',
+      // redirectMode: 'self' abre na mesma aba; 'blank' abre em nova aba
+      redirectMode: 'self',
+    },
+    customization: {
+      texts: {
+        action: 'pay',
+        valueProp: 'smart_option',
+      },
+    },
+    callbacks: {
+      onReady: () => {
+        // Botão carregado com sucesso — pode esconder loading spinner aqui
+      },
+      onError: (error) => {
+        console.error('MercadoPago Wallet Brick error:', error);
+        // Mostra fallback de link direto em caso de erro do SDK
+        document.getElementById('wallet_container').innerHTML =
+          '<a href="{{ init_point }}" class="mt-2 w-full inline-flex items-center justify-center gap-2 px-6 py-3.5 bg-sky-500 text-white text-sm font-bold rounded-xl hover:bg-sky-600 transition-colors duration-200">Ir para o MercadoPago</a>';
+      },
+    },
+  });
+</script>
+
+{% endblock %}
